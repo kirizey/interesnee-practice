@@ -24,9 +24,9 @@ select {
 }
 
 .add-car-form select,
-textarea,
-button,
-input {
+.add-car-form textarea,
+.add-car-form button,
+.add-car-form input {
   margin-bottom: 10px;
   border: 1px solid #ced4da;
   background: #fff;
