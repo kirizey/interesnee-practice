@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" href="./static/css/style.css" />
+    <title>JS Camp</title>
+  </head>
+  <body>
+    <form
+      action="https://backend-jscamp.saritasa-hosting.com/api/cars"
+      method="post"
+      class="add-car-form"
+    >
+      <h1>Add new car</h1>
+
+      <div class="form-group">
+        <label for="bodyTypeName">Body type:</label>
+        <select name="body_type_id" id="bodyTypeName">
+          <option value="1">Convertible</option>
+          <option value="2">Coupe</option>
+          <option value="3">Sedan</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="makeName">Make:</label>
+        <select name="make_id" id="makeName">
+          <option value="1">Kirlin-Stracke</option>
+          <option value="2">Muller, Goldner and Champlin</option>
+          <option value="3">Denesik Inc</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="carModel">Model:</label>
+        <select name="car_model_id" id="carModel">
+          <option value="1">Ohara</option>
+          <option value="2">Osinski</option>
+          <option value="7">Lang</option>
+          <option value="12">Stracke</option>
+          <option value="55">Wisoky</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="year">Year:</label>
+        <input name="year" type="number" min="1900" required />
+      </div>
+
+      <div class="form-group">
+        <label for="mileage">Mileage</label>
+        <input type="number" name="mileage" id="mileage" required />
+      </div>
+
+      <div class="form-group">
+        <label for="carDescription">Description:</label>
+      </div>
+
+      <div class="form-group">
+        <textarea
+          name="description"
+          id="carDescription"
+          cols="40"
+          rows="10"
+          placeholder="Enter the car's description..."
+          name="description"
+          required
+        ></textarea>
+      </div>
+
+      <div class="form-group">
+        <button type="submit">Add</button>
+      </div>
+    </form>
+  </body>
+</html>
