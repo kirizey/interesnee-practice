@@ -203,12 +203,12 @@ header {
 }
 
 .cars-list__error-msg {
-  font-size: 24px;
+  font-size: 20px;
   position: absolute;
   text-align: center;
   margin: 60px 0 0 20px;
   top: 0;
-  padding: 50px;
+  padding: 40px;
   background-color: rgba(50, 50, 50, 0.685);
   box-shadow: rgba(0, 0, 0, 0.13) 0px 2px 6px 0px;
   color: aliceblue;
