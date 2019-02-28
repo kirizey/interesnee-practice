@@ -1,6 +1,11 @@
 let toggleCreateForm = document.querySelector("#add-car-btn");
-let addCarForm = document.querySelector(".add-car-form");
+let modalWrapper = document.querySelector(".modal-wrapper");
 
-// toggleCreateForm.addEventListener("click", () =>
-//   addCarForm.classList.toggle("hidden")
-// );
+let toggleCreateCarModal = e => {
+  if (e.target.closest(".add-car-form")) return;
+
+  modalWrapper.classList.toggle("hidden");
+};
+
+toggleCreateForm.addEventListener("click", toggleCreateCarModal);
+modalWrapper.addEventListener("click", toggleCreateCarModal);

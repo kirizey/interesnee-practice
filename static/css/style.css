@@ -4,6 +4,7 @@ body {
   background: #fff;
   color: rgb(34, 34, 34);
   width: 100vw;
+  overflow-x: hidden;
 }
 
 h2,
@@ -14,11 +15,6 @@ label {
 button,
 select {
   cursor: pointer;
-}
-
-button[disabled],
-select[disabled] {
-  cursor: initial;
 }
 
 button {
@@ -32,8 +28,16 @@ button {
   transition: all 0.3s;
 }
 
-button:hover {
+button[disabled] {
+  cursor: initial;
+}
+
+button[disabled]:hover {
   background-color: #fff;
+}
+
+button:hover {
+  background-color: rgb(224, 224, 224);
 }
 
 input {
@@ -46,7 +50,7 @@ input {
 }
 
 .hidden {
-  display: none;
+  display: none !important;
 }
 
 .container {
@@ -66,7 +70,7 @@ header {
 .header__logo {
   color: #fff;
   font-weight: bold;
-  font-size: 18px;
+  font-size: 14px !important;
 }
 
 .header__items-wrap {
@@ -95,13 +99,22 @@ header {
 
 /* create car form styles */
 .add-car-form {
-  border: 1px solid #2daee0;
   border-radius: 5px;
   width: 400px;
   margin: 0 auto;
-  transform: translateY(50%);
   background: #fff;
   position: absolute;
+  animation: slide-down 0.4s;
+  position: relative;
+}
+
+.add-car-form__closer {
+  display: block;
+  color: #000;
+  font-size: 50px;
+  position: absolute;
+  top: -15px;
+  right: 20px;
 }
 
 .add-car-form select,
@@ -117,7 +130,7 @@ header {
   padding: 4px;
 }
 
-.add-car-form h1 {
+.add-car-form h2 {
   position: relative;
   text-align: center;
 }
@@ -150,6 +163,7 @@ header {
 
 .add-car-form button {
   background: #2daee0;
+  color: #fff;
 }
 
 .add-car-form button:hover {
@@ -176,8 +190,16 @@ header {
   font-weight: normal;
 }
 
+.cars-list thead th {
+  font-weight: bold;
+}
+
 .cars-list tbody tr {
   cursor: pointer;
+}
+
+.cars-list tbody tr:hover {
+  background-color: rgb(224, 224, 224);
 }
 
 .cars-list__error-msg {
@@ -191,7 +213,7 @@ header {
   box-shadow: rgba(0, 0, 0, 0.13) 0px 2px 6px 0px;
   color: aliceblue;
   border-radius: 20px;
-  animation: error-animation 0.4s;
+  animation: slide-down 0.4s;
 }
 
 /* paginator styles */
@@ -203,7 +225,29 @@ header {
   margin-top: 5px;
 }
 
-@keyframes error-animation {
+/* modal styles */
+.modal-wrapper {
+  background-color: rgba(0, 0, 0, 0.404);
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: opacity-grow 0.3s linear;
+}
+
+@keyframes opacity-grow {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-down {
   from {
     transform: translateY(-50%);
     opacity: 0;

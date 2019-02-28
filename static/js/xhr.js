@@ -25,7 +25,7 @@ let appendCarInstanceInTable = car => {
   let tr = document.createElement("tr");
 
   let make = document.createElement("th");
-  make.innerText = car.make.name;
+  make.innerHTML = car.make.name;
   tr.appendChild(make);
 
   let model = document.createElement("th");

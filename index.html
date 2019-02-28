@@ -10,10 +10,10 @@
   <body>
     <header>
       <div class="container header__items-wrap">
-        <div class="header__logo">CarsJS</div>
+        <div class="header__logo"><h1>CarsJS</h1></div>
 
         <div class="header__right-side">
-          <button class="header__create-car-btn">
+          <button class="header__create-car-btn" id="add-car-btn">
             Add car
           </button>
           <form id="header__search-bar">
@@ -58,68 +58,71 @@
       </div>
     </main>
 
-    <form class="add-car-form hidden">
-      <h1>Add new car</h1>
+    <div class="modal-wrapper hidden">
+      <form class="add-car-form">
+        <h2>Add new car</h1>
 
-      <div class="form-group">
-        <label for="bodyTypeName">Body type:</label>
-        <select name="body_type_id" id="bodyTypeName">
-          <option value="1">Convertible</option>
-          <option value="2">Coupe</option>
-          <option value="3">Sedan</option>
-        </select>
-      </div>
 
-      <div class="form-group">
-        <label for="makeName">Make:</label>
-        <select name="make_id" id="makeName">
-          <option value="1">Kirlin-Stracke</option>
-          <option value="2">Muller, Goldner and Champlin</option>
-          <option value="3">Denesik Inc</option>
-        </select>
-      </div>
+        <div class="form-group">
+          <label for="bodyTypeName">Body type:</label>
+          <select name="body_type_id" id="bodyTypeName">
+            <option value="1">Convertible</option>
+            <option value="2">Coupe</option>
+            <option value="3">Sedan</option>
+          </select>
+        </div>
 
-      <div class="form-group">
-        <label for="carModel">Model:</label>
-        <select name="car_model_id" id="carModel">
-          <option value="1">Ohara</option>
-          <option value="2">Osinski</option>
-          <option value="7">Lang</option>
-          <option value="12">Stracke</option>
-          <option value="55">Wisoky</option>
-        </select>
-      </div>
+        <div class="form-group">
+          <label for="makeName">Make:</label>
+          <select name="make_id" id="makeName">
+            <option value="1">Kirlin-Stracke</option>
+            <option value="2">Muller, Goldner and Champlin</option>
+            <option value="3">Denesik Inc</option>
+          </select>
+        </div>
 
-      <div class="form-group">
-        <label for="year">Year:</label>
-        <input name="year" type="number" min="1900" required />
-      </div>
+        <div class="form-group">
+          <label for="carModel">Model:</label>
+          <select name="car_model_id" id="carModel">
+            <option value="1">Ohara</option>
+            <option value="2">Osinski</option>
+            <option value="7">Lang</option>
+            <option value="12">Stracke</option>
+            <option value="55">Wisoky</option>
+          </select>
+        </div>
 
-      <div class="form-group">
-        <label for="mileage">Mileage</label>
-        <input type="number" name="mileage" id="mileage" required />
-      </div>
+        <div class="form-group">
+          <label for="year">Year:</label>
+          <input name="year" type="number" min="1900" required />
+        </div>
 
-      <div class="form-group">
-        <label for="carDescription">Description:</label>
-      </div>
+        <div class="form-group">
+          <label for="mileage">Mileage</label>
+          <input type="number" name="mileage" id="mileage" required />
+        </div>
 
-      <div class="form-group">
-        <textarea
-          name="description"
-          id="carDescription"
-          cols="40"
-          rows="10"
-          placeholder="Enter the car's description..."
-          name="description"
-          required
-        ></textarea>
-      </div>
+        <div class="form-group">
+          <label for="carDescription">Description:</label>
+        </div>
 
-      <div class="form-group">
-        <button type="submit" id="form-submit-btn">Add</button>
-      </div>
-    </form>
+        <div class="form-group">
+          <textarea
+            name="description"
+            id="carDescription"
+            cols="40"
+            rows="10"
+            placeholder="Enter the car's description..."
+            name="description"
+            required
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <button type="submit" id="form-submit-btn">Add</button>
+        </div>
+      </form>
+    </div>
 
     <script src="./static/js/main.js"></script>
     <script src="./static/js/xhr.js"></script>
