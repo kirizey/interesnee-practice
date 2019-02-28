@@ -6,10 +6,19 @@ const totalPagesElement = document.querySelector(".pages__total");
 const currentPageElement = document.querySelector(".pages__current");
 const searchBar = document.querySelector("#header__search-bar");
 const searchInput = document.querySelector("#search-input");
-// const addCarForm = document.querySelector(".add-car-form");
-// const submitBtn = document.querySelector("#form-submit-btn");
+
+const producerSortFilter = document.querySelector("#producer-filter");
+const modelSortFilter = document.querySelector("#model-filter");
+const bodyTypeSortFilter = document.querySelector("#body-type-filter");
+const yearSortFilter = document.querySelector("#year-filter");
+const mileageSortFilter = document.querySelector("#mileage-filter");
+const descriptionSortFilter = document.querySelector("#description-filter");
+const createdSortFilter = document.querySelector("#created-filter");
+const updatedSortFilter = document.querySelector("#updated-filter");
 
 let searchQuery = "";
+let sortBy = "";
+let sortOrder = "";
 
 const apiUrl = "https://backend-jscamp.saritasa-hosting.com/api/cars";
 
@@ -174,3 +183,35 @@ const formValidation = e => {
 };
 
 addCarForm.addEventListener("submit", formValidation);
+
+producerSortFilter.addEventListener("change", e =>
+  getCars(`${apiUrl}?order_by=make.name&sort_order=${e.target.value}`)
+);
+
+modelSortFilter.addEventListener("change", e =>
+  getCars(`${apiUrl}?order_by=car_model.name&sort_order=${e.target.value}`)
+);
+
+bodyTypeSortFilter.addEventListener("change", e =>
+  getCars(`${apiUrl}?order_by=body_type.name&sort_order=${e.target.value}`)
+);
+
+yearSortFilter.addEventListener("change", e =>
+  getCars(`${apiUrl}?order_by=year&sort_order=${e.target.value}`)
+);
+
+mileageSortFilter.addEventListener("change", e =>
+  getCars(`${apiUrl}?order_by=mileage&sort_order=${e.target.value}`)
+);
+
+descriptionSortFilter.addEventListener("change", e =>
+  getCars(`${apiUrl}?order_by=description&sort_order=${e.target.value}`)
+);
+
+createdSortFilter.addEventListener("change", e =>
+  getCars(`${apiUrl}?order_by=created_at&sort_order=${e.target.value}`)
+);
+
+updatedSortFilter.addEventListener("change", e =>
+  getCars(`${apiUrl}?order_by=updated_at&sort_order=${e.target.value}`)
+);

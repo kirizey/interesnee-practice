@@ -17,7 +17,8 @@ select {
   cursor: pointer;
 }
 
-button {
+button,
+select {
   border: 1px solid #ced4da;
   background: #fff;
   border-radius: 3px;
@@ -68,7 +69,7 @@ header {
   box-shadow: rgba(0, 0, 0, 0.13) 0px 2px 6px 0px;
   margin-bottom: 5px;
   width: 100vw;
-  height: 40px;
+  height: 50px;
 }
 
 .header__logo {
@@ -242,6 +243,37 @@ header {
   align-items: center;
   justify-content: center;
   animation: opacity-grow 0.3s linear;
+}
+
+/* action panel */
+.action-panel {
+  display: flex;
+  justify-content: space-between;
+}
+
+.action-panel__sort-fields {
+  display: flex;
+}
+.sort-fields__item {
+  margin: 2px;
+}
+
+.arrow-down {
+  border: solid black;
+  border-width: 0 3px 3px 0;
+  display: inline-block;
+  padding: 2px;
+  transform: rotate(45deg);
+  margin-bottom: 2px;
+}
+
+.arrow-up {
+  border: solid black;
+  border-width: 0 3px 3px 0;
+  display: inline-block;
+  padding: 2px;
+  transform: rotate(-45deg);
+  margin-bottom: 2px;
 }
 
 @keyframes opacity-grow {

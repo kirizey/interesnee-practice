@@ -44,24 +44,84 @@
           </tr>
         </thead>
         <tbody class="cars-list__body"></tbody>
+        <div class="action-panel">
+          <div class="action-panel__sort-fields">
+            <div class="sort-fields__item">
+              <select id="producer-filter">
+                <option value="asc">Producer</option>
+                <option value="asc">ascending</option>
+                <option value="desc">descending</option>
+              </select>
+            </div>
+            <div class="sort-fields__item">
+              <select id="model-filter">
+                <option value="asc">Model</option>
+                <option value="asc">ascending</option>
+                <option value="desc">descending</option>
+              </select>
+            </div>
+            <div class="sort-fields__item">
+              <select id="body-type-filter">
+                <option value="asc">Body type</option>
+                <option value="asc">ascending</option>
+                <option value="desc">descending</option>
+              </select>
+            </div>
+            <div class="sort-fields__item">
+              <select id="year-filter">
+                <option value="asc">Year</option>
+                <option value="asc">ascending</option>
+                <option value="desc">descending</option>
+              </select>
+            </div>
+            <div class="sort-fields__item">
+              <select id="mileage-filter">
+                <option value="asc">Mileage</option>
+                <option value="asc">ascending</option>
+                <option value="desc">descending</option>
+              </select>
+            </div>
+            <div class="sort-fields__item">
+              <select id="description-filter">
+                <option value="asc">Description</option>
+                <option value="asc">ascending</option>
+                <option value="desc">descending</option>
+              </select>
+            </div>
+            <div class="sort-fields__item">
+              <select id="created-filter">
+                <option value="asc">Created</option>
+                <option value="asc">ascending</option>
+                <option value="desc">descending</option>
+              </select>
+            </div>
+            <div class="sort-fields__item">
+              <select id="updated-filter">
+                <option value="asc">Updated</option>
+                <option value="asc">ascending</option>
+                <option value="desc">descending</option>
+              </select>
+            </div>
+          </div>
+        </div>
         <div class="paginator">
           <button id="prev-page-arrow">
-            < </button> <div class="paginator__pages">
-              <span class="pages__current"></span> /
-              <span class="pages__total"></span>
-        </div>
-        <button id="next-page-arrow">
-          >
-        </button>
+            <
+          </button>
+          <div class="paginator__pages">
+            <span class="pages__current"></span> /
+            <span class="pages__total"></span>
+          </div>
+          <button id="next-page-arrow">
+            >
+          </button>
         </div>
       </table>
-     
     </main>
 
     <div class="modal-wrapper hidden">
       <form class="add-car-form">
-        <h2>Add new car</h1>
-
+        <h2>Add new car</h2>
 
         <div class="form-group">
           <label for="bodyTypeName">Body type:</label>
