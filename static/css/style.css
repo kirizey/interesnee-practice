@@ -53,6 +53,10 @@ input {
   display: none !important;
 }
 
+.rejected {
+  border: 1px solid red !important;
+}
+
 .container {
   max-width: 1300px;
   margin: 0 auto;
@@ -215,7 +219,7 @@ header {
   box-shadow: rgba(0, 0, 0, 0.13) 0px 2px 6px 0px;
   color: aliceblue;
   border-radius: 20px;
-  animation: slide-down 0.4s;
+  animation: slide-down 0.6s;
 }
 
 /* paginator styles */

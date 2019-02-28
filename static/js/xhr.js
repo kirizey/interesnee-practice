@@ -6,24 +6,27 @@ const totalPagesElement = document.querySelector(".pages__total");
 const currentPageElement = document.querySelector(".pages__current");
 const searchBar = document.querySelector("#header__search-bar");
 const searchInput = document.querySelector("#search-input");
+// const addCarForm = document.querySelector(".add-car-form");
+// const submitBtn = document.querySelector("#form-submit-btn");
+
 let searchQuery = "";
 
 const apiUrl = "https://backend-jscamp.saritasa-hosting.com/api/cars";
 
 //push markup error if 503 status
-let appendTableError = () => {
+const pushPopup = message => {
   const errorDiv = document.createElement("div");
-  errorDiv.innerText = "No data. Refresh the page or try continue.";
+  errorDiv.innerText = message;
   errorDiv.classList.add("cars-list__error-msg");
   document.querySelector("body").appendChild(errorDiv);
 
   setTimeout(function() {
     errorDiv.remove();
-  }, 2000);
+  }, 4000);
 };
 
 //fill the row of table
-let appendCarInstanceInTable = car => {
+const appendCarInstanceInTable = car => {
   let tr = document.createElement("tr");
 
   let make = document.createElement("th");
@@ -62,7 +65,7 @@ let appendCarInstanceInTable = car => {
 };
 
 //render cars
-let getCars = async url => {
+const getCars = async url => {
   let xhr = await new XMLHttpRequest();
   await xhr.open("GET", url, false);
   await xhr.send();
@@ -96,7 +99,7 @@ let getCars = async url => {
         })
       : null;
   } else {
-    appendTableError();
+    pushPopup("Connection error, try again");
   }
 };
 
@@ -104,7 +107,7 @@ let getCars = async url => {
 getCars(`${apiUrl}?page=1`);
 
 //search data
-let searchData = e => {
+const searchData = e => {
   e.preventDefault();
 
   getCars(`${apiUrl}?keyword=${e.target.elements.queryText.value}`);
@@ -113,15 +116,13 @@ let searchData = e => {
 searchBar.addEventListener("submit", searchData);
 
 //pagination moving
-let getNextPage = () => {
-  const urlParams = window.location.search;
-  console.log(urlParams);
+const getNextPage = () =>
   getCars(
     `${apiUrl}?page=${parseInt(currentPageElement.innerText) +
       1}&keyword=${searchQuery}`
   );
-};
-let getPrevPage = () =>
+
+const getPrevPage = () =>
   getCars(
     `${apiUrl}?page=${parseInt(currentPageElement.innerText) -
       1}&keyword=${searchQuery}`
@@ -129,4 +130,47 @@ let getPrevPage = () =>
 
 nextPageArrow.addEventListener("click", getNextPage);
 prevPageArrow.addEventListener("click", getPrevPage);
+
+//save the search text
 searchInput.addEventListener("keydown", e => (searchQuery = e.target.value));
+
+const createCar = async e => {
+  let xhr = await new XMLHttpRequest();
+
+  await xhr.open("POST", apiUrl, false);
+
+  let formData = await new FormData(document.querySelector(".add-car-form"));
+
+  await xhr.send(formData);
+
+  xhr.status === 200
+    ? pushPopup("Created")
+    : pushPopup("Server error. Try again.");
+};
+
+const rejectField = (element, errorMessage) => {
+  element.classList.add("rejected");
+  pushPopup(errorMessage);
+};
+
+const unrejectField = element => element.classList.remove("rejected");
+
+const formValidation = e => {
+  e.preventDefault();
+
+  const year = e.target.elements.year.value;
+
+  const currentYear = new Date().getFullYear();
+
+  if (year < 1900 || year > currentYear) {
+    rejectField(
+      e.target.elements.year,
+      `Year must greather than 1900 and less than ${currentYear}`
+    );
+  } else {
+    createCar();
+    unrejectField(e.target.elements.year);
+  }
+};
+
+addCarForm.addEventListener("submit", formValidation);
