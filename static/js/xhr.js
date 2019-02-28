@@ -5,6 +5,8 @@ const nextPageArrow = document.querySelector("#next-page-arrow");
 const totalPagesElement = document.querySelector(".pages__total");
 const currentPageElement = document.querySelector(".pages__current");
 const searchBar = document.querySelector("#header__search-bar");
+const searchInput = document.querySelector("#search-input");
+let searchQuery = "";
 
 const apiUrl = "https://backend-jscamp.saritasa-hosting.com/api/cars";
 
@@ -102,22 +104,29 @@ let getCars = async url => {
 getCars(`${apiUrl}?page=1`);
 
 //search data
-let searchQuery = e => {
+let searchData = e => {
   e.preventDefault();
 
   getCars(`${apiUrl}?keyword=${e.target.elements.queryText.value}`);
 };
 
-searchBar.addEventListener("submit", searchQuery);
+searchBar.addEventListener("submit", searchData);
 
 //pagination moving
 let getNextPage = () => {
   const urlParams = window.location.search;
   console.log(urlParams);
-  getCars(`${apiUrl}?page=${parseInt(currentPageElement.innerText) + 1}`);
+  getCars(
+    `${apiUrl}?page=${parseInt(currentPageElement.innerText) +
+      1}&keyword=${searchQuery}`
+  );
 };
 let getPrevPage = () =>
-  getCars(`${apiUrl}?page=${parseInt(currentPageElement.innerText) - 1}`);
+  getCars(
+    `${apiUrl}?page=${parseInt(currentPageElement.innerText) -
+      1}&keyword=${searchQuery}`
+  );
 
 nextPageArrow.addEventListener("click", getNextPage);
 prevPageArrow.addEventListener("click", getPrevPage);
+searchInput.addEventListener("keydown", e => (searchQuery = e.target.value));

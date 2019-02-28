@@ -21,6 +21,7 @@
               type="search"
               placeholder="Type search query..."
               name="queryText"
+              id="search-input"
             />
             <button type="submit">Search</button>
           </form>
@@ -43,19 +44,18 @@
           </tr>
         </thead>
         <tbody class="cars-list__body"></tbody>
-      </table>
-      <div class="paginator">
-        <button id="prev-page-arrow">
-          <
-        </button>
-        <div class="paginator__pages">
-          <span class="pages__current"></span> /
-          <span class="pages__total"></span>
+        <div class="paginator">
+          <button id="prev-page-arrow">
+            < </button> <div class="paginator__pages">
+              <span class="pages__current"></span> /
+              <span class="pages__total"></span>
         </div>
         <button id="next-page-arrow">
           >
         </button>
-      </div>
+        </div>
+      </table>
+     
     </main>
 
     <div class="modal-wrapper hidden">
