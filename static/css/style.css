@@ -1,12 +1,14 @@
 body {
   padding: 0;
   margin: 0;
-  background: #f2f8ff;
+  background: #fff;
+  color: rgb(34, 34, 34);
+  width: 100vw;
 }
 
 h2,
 label {
-  color: #32373b;
+  color: hsl(207, 8%, 21%);
 }
 
 button,
@@ -14,6 +16,84 @@ select {
   cursor: pointer;
 }
 
+button[disabled],
+select[disabled] {
+  cursor: initial;
+}
+
+button {
+  border: 1px solid #ced4da;
+  background: #fff;
+  border-radius: 3px;
+  min-width: 100px;
+  min-height: 24px;
+  padding: 4px;
+  font-weight: bold;
+  transition: all 0.3s;
+}
+
+button:hover {
+  background-color: #fff;
+}
+
+input {
+  border: 1px solid #ced4da;
+  background: #fff;
+  border-radius: 3px;
+  min-width: 100px;
+  min-height: 24px;
+  padding: 4px;
+}
+
+.hidden {
+  display: none;
+}
+
+.container {
+  max-width: 1300px;
+  margin: 0 auto;
+}
+
+/* header styles */
+header {
+  background-color: rgb(50, 50, 50);
+  box-shadow: rgba(0, 0, 0, 0.13) 0px 2px 6px 0px;
+  margin-bottom: 5px;
+  width: 100vw;
+  height: 40px;
+}
+
+.header__logo {
+  color: #fff;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.header__items-wrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1130px;
+  margin: 0 auto;
+  height: 100%;
+}
+
+.header__right-side {
+  display: flex;
+}
+
+.header__create-car-btn {
+  margin-right: 5px;
+  background-color: #28a745;
+  color: #fff;
+  border: 1px solid #28a745;
+}
+
+.header__create-car-btn:hover {
+  background-color: #2cb64c;
+}
+
+/* create car form styles */
 .add-car-form {
   border: 1px solid #2daee0;
   border-radius: 5px;
@@ -21,6 +101,7 @@ select {
   margin: 0 auto;
   transform: translateY(50%);
   background: #fff;
+  position: absolute;
 }
 
 .add-car-form select,
@@ -31,7 +112,7 @@ select {
   border: 1px solid #ced4da;
   background: #fff;
   border-radius: 3px;
-  min-width: 150px;
+  min-width: 100px;
   min-height: 24px;
   padding: 4px;
 }
@@ -69,8 +150,6 @@ select {
 
 .add-car-form button {
   background: #2daee0;
-  color: #fff;
-  font-weight: bold;
 }
 
 .add-car-form button:hover {
@@ -83,4 +162,55 @@ select {
   justify-content: space-between;
   align-items: center;
   margin: 0 20px;
+}
+
+/* cars list styles */
+.cars-list {
+  width: 100%;
+}
+
+.cars-list th {
+  padding: 5px;
+  vertical-align: top;
+  border: 1px solid #dee2e6;
+  font-weight: normal;
+}
+
+.cars-list tbody tr {
+  cursor: pointer;
+}
+
+.cars-list__error-msg {
+  font-size: 24px;
+  position: absolute;
+  text-align: center;
+  margin: 60px 0 0 20px;
+  top: 0;
+  padding: 50px;
+  background-color: rgba(50, 50, 50, 0.685);
+  box-shadow: rgba(0, 0, 0, 0.13) 0px 2px 6px 0px;
+  color: aliceblue;
+  border-radius: 20px;
+  animation: error-animation 0.4s;
+}
+
+/* paginator styles */
+.paginator {
+  display: flex;
+  width: 300px;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 5px;
+}
+
+@keyframes error-animation {
+  from {
+    transform: translateY(-50%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }

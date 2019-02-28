@@ -8,11 +8,57 @@
     <title>JS Camp</title>
   </head>
   <body>
-    <form
-      action="https://backend-jscamp.saritasa-hosting.com/api/cars"
-      method="post"
-      class="add-car-form"
-    >
+    <header>
+      <div class="container header__items-wrap">
+        <div class="header__logo">CarsJS</div>
+
+        <div class="header__right-side">
+          <button class="header__create-car-btn">
+            Add car
+          </button>
+          <form id="header__search-bar">
+            <input
+              type="search"
+              placeholder="Type search query..."
+              name="queryText"
+            />
+            <button type="submit">Search</button>
+          </form>
+        </div>
+      </div>
+    </header>
+
+    <main class="container">
+      <table class="cars-list">
+        <thead>
+          <tr>
+            <th>Producer</th>
+            <th>Model</th>
+            <th>Body type</th>
+            <th>Year</th>
+            <th>Mileage</th>
+            <th>Description</th>
+            <th>Created</th>
+            <th>Updated</th>
+          </tr>
+        </thead>
+        <tbody class="cars-list__body"></tbody>
+      </table>
+      <div class="paginator">
+        <button id="prev-page-arrow">
+          <
+        </button>
+        <div class="paginator__pages">
+          <span class="pages__current"></span> /
+          <span class="pages__total"></span>
+        </div>
+        <button id="next-page-arrow">
+          >
+        </button>
+      </div>
+    </main>
+
+    <form class="add-car-form hidden">
       <h1>Add new car</h1>
 
       <div class="form-group">
@@ -71,8 +117,11 @@
       </div>
 
       <div class="form-group">
-        <button type="submit">Add</button>
+        <button type="submit" id="form-submit-btn">Add</button>
       </div>
     </form>
+
+    <script src="./static/js/main.js"></script>
+    <script src="./static/js/xhr.js"></script>
   </body>
 </html>
