@@ -100,11 +100,7 @@ const getCars = async url => {
       : nextPageArrow.removeAttribute("disabled", true);
 
     //fill table
-    cars.length > 0
-      ? cars.map(car => {
-          appendCarInstanceInTable(car);
-        })
-      : null;
+    cars.length > 0 ? cars.map(car => appendCarInstanceInTable(car)) : null;
   } else {
     pushPopup("Connection error, try again");
   }
@@ -117,7 +113,9 @@ getCars(`${apiUrl}?page=1`);
 const searchData = e => {
   e.preventDefault();
 
-  getCars(`${apiUrl}?keyword=${e.target.elements.queryText.value}`);
+  let sortQuery = sortBy ? `&order_by=${sortBy}&sort_order=${sortOrder}` : "";
+
+  getCars(`${apiUrl}?keyword=${e.target.elements.queryText.value}${sortQuery}`);
 };
 
 searchBar.addEventListener("submit", searchData);
@@ -125,6 +123,7 @@ searchBar.addEventListener("submit", searchData);
 //pagination moving
 const getNextPage = () => {
   let sortQuery = sortBy ? `&order_by=${sortBy}&sort_order=${sortOrder}` : "";
+
   getCars(
     `${apiUrl}?page=${parseInt(currentPageElement.innerText) +
       1}&keyword=${searchQuery}${sortQuery}`
@@ -195,7 +194,12 @@ addCarForm.addEventListener("submit", formValidation);
 const makeSortedQuery = (field, event) => {
   sortBy = field;
   sortOrder = event.target.value;
-  getCars(`${apiUrl}?&order_by=${field}&sort_order=${sortOrder}`);
+  console.log(sortOrder);
+  sortOrder
+    ? getCars(`${apiUrl}?&order_by=${field}&sort_order=${sortOrder}`)
+    : getCars(`${apiUrl}`);
+
+  searchQuery = "";
 };
 
 //listners for sort query
