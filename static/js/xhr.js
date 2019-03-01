@@ -118,8 +118,6 @@ const searchData = e => {
   getCars(`${apiUrl}?keyword=${e.target.elements.queryText.value}${sortQuery}`);
 };
 
-searchBar.addEventListener("submit", searchData);
-
 //pagination moving
 const getNextPage = () => {
   let sortQuery = sortBy ? `&order_by=${sortBy}&sort_order=${sortOrder}` : "";
@@ -138,12 +136,6 @@ const getPrevPage = () => {
       1}&keyword=${searchQuery}${sortQuery}`
   );
 };
-
-nextPageArrow.addEventListener("click", getNextPage);
-prevPageArrow.addEventListener("click", getPrevPage);
-
-//save the search text
-searchInput.addEventListener("keydown", e => (searchQuery = e.target.value));
 
 //create car query to API
 const createCar = async e => {
@@ -188,8 +180,6 @@ const formValidation = e => {
   }
 };
 
-addCarForm.addEventListener("submit", formValidation);
-
 //get sorted query to API based on field
 const makeSortedQuery = (field, event) => {
   sortBy = field;
@@ -232,3 +222,13 @@ createdSortFilter.addEventListener("change", e =>
 updatedSortFilter.addEventListener("change", e =>
   makeSortedQuery("updated_at", e)
 );
+
+nextPageArrow.addEventListener("click", getNextPage);
+prevPageArrow.addEventListener("click", getPrevPage);
+
+//save the search text
+searchInput.addEventListener("keydown", e => (searchQuery = e.target.value));
+
+addCarForm.addEventListener("submit", formValidation);
+
+searchBar.addEventListener("submit", searchData);
