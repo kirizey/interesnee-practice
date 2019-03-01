@@ -29,9 +29,7 @@ const pushPopup = message => {
   errorDiv.classList.add("cars-list__error-msg");
   document.querySelector("body").appendChild(errorDiv);
 
-  setTimeout(function() {
-    errorDiv.remove();
-  }, 4000);
+  setTimeout(() => errorDiv.remove(), 3000);
 };
 
 //fill the row of table
@@ -133,11 +131,14 @@ const getNextPage = () => {
   );
 };
 
-const getPrevPage = () =>
+const getPrevPage = () => {
+  let sortQuery = sortBy ? `&order_by=${sortBy}&sort_order=${sortOrder}` : "";
+
   getCars(
     `${apiUrl}?page=${parseInt(currentPageElement.innerText) -
-      1}&keyword=${searchQuery}`
+      1}&keyword=${searchQuery}${sortQuery}`
   );
+};
 
 nextPageArrow.addEventListener("click", getNextPage);
 prevPageArrow.addEventListener("click", getPrevPage);
@@ -145,6 +146,7 @@ prevPageArrow.addEventListener("click", getPrevPage);
 //save the search text
 searchInput.addEventListener("keydown", e => (searchQuery = e.target.value));
 
+//create car query to API
 const createCar = async e => {
   let xhr = await new XMLHttpRequest();
 
@@ -159,13 +161,16 @@ const createCar = async e => {
     : pushPopup("Server error. Try again.");
 };
 
+//style input red red color if it's invalid
 const rejectField = (element, errorMessage) => {
   element.classList.add("rejected");
   pushPopup(errorMessage);
 };
 
+//reset invalid color on "year" input
 const unrejectField = element => element.classList.remove("rejected");
 
+//validate "year" field in create car form
 const formValidation = e => {
   e.preventDefault();
 
@@ -186,54 +191,40 @@ const formValidation = e => {
 
 addCarForm.addEventListener("submit", formValidation);
 
-producerSortFilter.addEventListener("change", e => {
-  sortBy = "make.name";
-  sortOrder = e.target.value;
-  getCars(
-    `${apiUrl}?keyup=${searchQuery}&order_by=make.name&sort_order=${
-      e.target.value
-    }`
-  );
-});
+//get sorted query to API based on field
+const makeSortedQuery = (field, event) => {
+  sortBy = field;
+  sortOrder = event.target.value;
+  getCars(`${apiUrl}?&order_by=${field}&sort_order=${sortOrder}`);
+};
 
-modelSortFilter.addEventListener("change", e => {
-  sortBy = "car_model.name";
-  sortOrder = e.target.value;
-  getCars(`${apiUrl}?order_by=car_model.name&sort_order=${e.target.value}`);
-});
+//listners for sort query
+producerSortFilter.addEventListener("change", e =>
+  makeSortedQuery("make.name", e)
+);
 
-bodyTypeSortFilter.addEventListener("change", e => {
-  sortBy = "body_type.name";
-  sortOrder = e.target.value;
-  getCars(`${apiUrl}?order_by=body_type.name&sort_order=${e.target.value}`);
-});
+modelSortFilter.addEventListener("change", e =>
+  makeSortedQuery("car_model.name", e)
+);
 
-yearSortFilter.addEventListener("change", e => {
-  sortBy = "year";
-  sortOrder = e.target.value;
-  getCars(`${apiUrl}?order_by=year&sort_order=${e.target.value}`);
-});
+bodyTypeSortFilter.addEventListener("change", e =>
+  makeSortedQuery("body_type.name", e)
+);
 
-mileageSortFilter.addEventListener("change", e => {
-  sortBy = "mileage";
-  sortOrder = e.target.value;
-  getCars(`${apiUrl}?order_by=mileage&sort_order=${e.target.value}`);
-});
+yearSortFilter.addEventListener("change", e => makeSortedQuery("year", e));
 
-descriptionSortFilter.addEventListener("change", e => {
-  sortBy = "description";
-  sortOrder = e.target.value;
-  getCars(`${apiUrl}?order_by=description&sort_order=${e.target.value}`);
-});
+mileageSortFilter.addEventListener("change", e =>
+  makeSortedQuery("mileage", e)
+);
 
-createdSortFilter.addEventListener("change", e => {
-  sortBy = "created_at";
-  sortOrder = e.target.value;
-  getCars(`${apiUrl}?order_by=created_at&sort_order=${e.target.value}`);
-});
+descriptionSortFilter.addEventListener("change", e =>
+  makeSortedQuery("description", e)
+);
 
-updatedSortFilter.addEventListener("change", e => {
-  sortBy = "created_at";
-  sortOrder = e.target.value;
-  getCars(`${apiUrl}?order_by=updated_at&sort_order=${e.target.value}`);
-});
+createdSortFilter.addEventListener("change", e =>
+  makeSortedQuery("created_at", e)
+);
+
+updatedSortFilter.addEventListener("change", e =>
+  makeSortedQuery("updated_at", e)
+);
