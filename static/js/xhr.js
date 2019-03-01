@@ -1,11 +1,18 @@
-const tableBody = document.querySelector(".cars-list__body");
+const tableBodyElement = document.querySelector(".cars-list__body");
 const tableElement = document.querySelector(".cars-list");
+
 const prevPageArrow = document.querySelector("#prev-page-arrow");
 const nextPageArrow = document.querySelector("#next-page-arrow");
 const totalPagesElement = document.querySelector(".pages__total");
+
 const currentPageElement = document.querySelector(".pages__current");
+
 const searchBar = document.querySelector("#header__search-bar");
 const searchInput = document.querySelector("#search-input");
+
+const carForm = document.querySelector(".add-car-form");
+const carFormTitle = document.querySelector("#add-car-form__title");
+const submitFormButton = document.querySelector("#form-submit-btn");
 
 const producerSortFilter = document.querySelector("#producer-filter");
 const modelSortFilter = document.querySelector("#model-filter");
@@ -16,11 +23,129 @@ const descriptionSortFilter = document.querySelector("#description-filter");
 const createdSortFilter = document.querySelector("#created-filter");
 const updatedSortFilter = document.querySelector("#updated-filter");
 
+const toggleCreateForm = document.querySelector("#add-car-btn");
+const modalWrapper = document.querySelector(".modal-wrapper");
+
+const yearField = carForm.elements.year;
+
 let searchQuery = "";
 let sortBy = "";
 let sortOrder = "";
 
+let pageCars = [];
+
 const apiUrl = "https://backend-jscamp.saritasa-hosting.com/api/cars";
+
+const toggleModal = () => modalWrapper.classList.toggle("hidden");
+
+const toggleCarModalForm = (e, method = "") => {
+  //prevent close modal while click on form
+  if (e.target.closest(".add-car-form")) return;
+
+  //close modal by click outside form
+  if (method === "closeModal") {
+    toggleModal();
+  }
+
+  //if create car
+  if (method === "POST") {
+    toggleModal();
+    fillForm("POST");
+  } // if update car
+  else if (method === "PUT") {
+    const carId = e.target.parentElement.getAttribute("data-id");
+
+    submitFormButton.setAttribute("data-carId", carId);
+
+    let car = pageCars.filter(car => car.id === parseInt(carId))[0];
+
+    if (car) {
+      toggleModal();
+
+      fillForm("PUT", car);
+    } else {
+      pushPopup("Connection error. Try one more time.");
+    }
+  }
+};
+
+//dynamic prepare form to post or put request
+const fillForm = (method, car = "") => {
+  if (method === "POST") {
+    carFormTitle.innerText = `Add car`;
+    yearField.removeAttribute("disabled");
+    submitFormButton.innerText = "Add";
+
+    submitFormButton.setAttribute("data-post", true);
+    submitFormButton.removeAttribute("data-put");
+    submitFormButton.setAttribute("data-carId", false);
+
+    carForm.elements.body_type_id.value = "";
+    carForm.elements.make_id.value = "";
+    carForm.elements.year.value = "";
+    carForm.elements.car_model_id.value = "";
+    carForm.elements.mileage.value = "";
+    carForm.elements.description.value = "";
+  } else if (method === "PUT") {
+    carFormTitle.innerText = `Update car #${car.id}`;
+    yearField.setAttribute("disabled", true);
+
+    submitFormButton.innerText = "Update";
+    submitFormButton.setAttribute("data-put", true);
+    submitFormButton.removeAttribute("data-post");
+
+    carForm.elements.body_type_id.value = car.body_type_id;
+    carForm.elements.make_id.value = car.make_id;
+    carForm.elements.year.value = car.year;
+    carForm.elements.car_model_id.value = car.car_model_id;
+    carForm.elements.mileage.value = car.mileage;
+    carForm.elements.description.value = car.description ? car.description : "";
+  }
+};
+
+//create car query to API
+const formSubmit = async e => {
+  if (submitFormButton.getAttribute("data-post")) {
+    let xhr = new XMLHttpRequest();
+
+    await xhr.open("POST", apiUrl, false);
+
+    await xhr.send(formData);
+    if (xhr.readyState == 4 && xhr.status === 200) {
+      pushPopup("Created");
+
+      toggleModal();
+    } else {
+      pushPopup("Server error. Try again.");
+    }
+  } else if (submitFormButton.getAttribute("data-put")) {
+    let xhr = new XMLHttpRequest();
+
+    let body = {
+      body_type_id: carForm.elements.body_type_id.value,
+      make_id: carForm.elements.make_id.value,
+      car_model_id: carForm.elements.car_model_id.value,
+      year: carForm.elements.year.value,
+      description: carForm.elements.description.value,
+      mileage: carForm.elements.mileage.value
+    };
+    const carId = submitFormButton.getAttribute("data-carId");
+
+    await xhr.open("PUT", `${apiUrl}/${carId}`, false);
+    await xhr.setRequestHeader("content-type", "application/json");
+
+    await xhr.send(JSON.stringify(body));
+
+    if (xhr.readyState == 4 && xhr.status === 200) {
+      pushPopup("Updated");
+      toggleModal();
+    } else {
+      pushPopup("Server error. Try again.");
+    }
+  } else {
+    pushPopup("Error");
+  }
+};
 
 //push markup error if 503 status
 const pushPopup = message => {
@@ -32,20 +157,43 @@ const pushPopup = message => {
   setTimeout(() => errorDiv.remove(), 3000);
 };
 
+const openEditModal = async e => {
+  if (e.target.closest(".add-car-form")) return;
+
+  const carId = e.target.parentElement.getAttribute("data-id");
+
+  let xhr = new XMLHttpRequest();
+
+  await xhr.open("GET", `${apiUrl}/${carId}`, false);
+  await xhr.send();
+
+  if (xhr.readyState == 4 && xhr.status === 200) {
+    let car = JSON.parse(xhr.response);
+
+    toggleModal();
+  } else {
+    pushPopup("Connection error. Try one more time.");
+  }
+};
+
 //fill the row of table
 const appendCarInstanceInTable = car => {
   let tr = document.createElement("tr");
+  tr.setAttribute("data-id", car.id);
 
   let make = document.createElement("th");
   make.innerHTML = car.make.name;
+  make.addEventListener("click", e => toggleCarModalForm(e, "PUT"));
   tr.appendChild(make);
 
   let model = document.createElement("th");
   model.innerText = car.car_model.name;
+  model.addEventListener("click", e => toggleCarModalForm(e, "PUT"));
   tr.appendChild(model);
 
   let bodyType = document.createElement("th");
   bodyType.innerText = car.body_type.name;
+  bodyType.addEventListener("click", e => toggleCarModalForm(e, "PUT"));
   tr.appendChild(bodyType);
 
   let year = document.createElement("th");
@@ -61,39 +209,40 @@ const appendCarInstanceInTable = car => {
   tr.appendChild(description);
 
   let created_at = document.createElement("th");
-  created_at.innerText = car.created_at;
+  created_at.innerText = moment(car.created_at).format("DD.MM.YYYY h:mm");
   tr.appendChild(created_at);
 
   let updated_at = document.createElement("th");
-  updated_at.innerText = car.updated_at;
+  updated_at.innerText = moment(car.updated_at).format("DD.MM.YYYY h:mm");
   tr.appendChild(updated_at);
 
-  tableBody.appendChild(tr);
+  tableBodyElement.appendChild(tr);
 };
 
 //render cars
 const getCars = async url => {
-  let xhr = await new XMLHttpRequest();
+  let xhr = new XMLHttpRequest();
   await xhr.open("GET", url, false);
   await xhr.send();
 
-  if (xhr.status === 200) {
+  if (xhr.readyState == 4 && xhr.status === 200) {
     //remove old data
-    while (tableBody.firstChild) {
-      tableBody.removeChild(tableBody.firstChild);
+    while (tableBodyElement.firstChild) {
+      tableBodyElement.removeChild(tableBodyElement.firstChild);
     }
 
-    let cars = await JSON.parse(xhr.response).results;
+    let cars = JSON.parse(xhr.response).results;
+    pageCars = [...cars];
 
-    let paginationData = await JSON.parse(xhr.response).pagination;
+    let paginationData = JSON.parse(xhr.response).pagination;
 
-    currentPageElement.innerText = await paginationData.current_page;
+    currentPageElement.innerText = paginationData.current_page;
 
     paginationData.current_page === 1
       ? prevPageArrow.setAttribute("disabled", true)
       : prevPageArrow.removeAttribute("disabled", true);
 
-    totalPagesElement.innerText = await paginationData.total_pages;
+    totalPagesElement.innerText = paginationData.total_pages;
 
     paginationData.total_pages === parseInt(currentPageElement.innerText)
       ? nextPageArrow.setAttribute("disabled", true)
@@ -105,7 +254,6 @@ const getCars = async url => {
     pushPopup("Connection error, try again");
   }
 };
-
 //initial table state
 getCars(`${apiUrl}?page=1`);
 
@@ -137,21 +285,6 @@ const getPrevPage = () => {
   );
 };
 
-//create car query to API
-const createCar = async e => {
-  let xhr = await new XMLHttpRequest();
-
-  await xhr.open("POST", apiUrl, false);
-
-  let formData = await new FormData(document.querySelector(".add-car-form"));
-
-  await xhr.send(formData);
-
-  xhr.status === 200
-    ? pushPopup("Created")
-    : pushPopup("Server error. Try again.");
-};
-
 //style input red red color if it's invalid
 const rejectField = (element, errorMessage) => {
   element.classList.add("rejected");
@@ -175,7 +308,7 @@ const formValidation = e => {
       `Year must greather than 1900 and less than ${currentYear}`
     );
   } else {
-    createCar();
+    formSubmit(e);
     unrejectField(e.target.elements.year);
   }
 };
@@ -229,6 +362,12 @@ prevPageArrow.addEventListener("click", getPrevPage);
 //save the search text
 searchInput.addEventListener("keydown", e => (searchQuery = e.target.value));
 
-addCarForm.addEventListener("submit", formValidation);
+carForm.addEventListener("submit", formValidation);
 
 searchBar.addEventListener("submit", searchData);
+
+toggleCreateForm.addEventListener("click", e => toggleCarModalForm(e, "POST"));
+
+modalWrapper.addEventListener("click", e =>
+  toggleCarModalForm(e, "closeModal")
+);
