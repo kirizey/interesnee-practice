@@ -103,7 +103,7 @@ header {
 }
 
 /* create car form styles */
-.add-car-form {
+.car-form {
   border-radius: 5px;
   width: 400px;
   margin: 0 auto;
@@ -113,7 +113,7 @@ header {
   position: relative;
 }
 
-.add-car-form__closer {
+.car-form__closer {
   display: block;
   color: #000;
   font-size: 50px;
@@ -122,10 +122,10 @@ header {
   right: 20px;
 }
 
-.add-car-form select,
-.add-car-form textarea,
-.add-car-form button,
-.add-car-form input {
+.car-form select,
+.car-form textarea,
+.car-form button,
+.car-form input {
   margin-bottom: 10px;
   border: 1px solid #ced4da;
   background: #fff;
@@ -135,12 +135,12 @@ header {
   padding: 4px;
 }
 
-.add-car-form h2 {
+.car-form h2 {
   position: relative;
   text-align: center;
 }
 
-.add-car-form h2::after {
+.car-form h2::after {
   content: "";
   position: absolute;
   right: 0;
@@ -152,26 +152,26 @@ header {
   bottom: -4px;
 }
 
-.add-car-form textarea,
-.add-car-form button {
+.car-form textarea,
+.car-form button {
   width: 100%;
 }
 
-.add-car-form textarea {
+.car-form textarea {
   margin-top: 6px;
 }
 
-.add-car-form textarea::placeholder {
+.car-form textarea::placeholder {
   font-family: sans-serif;
   font-size: 14px;
 }
 
-.add-car-form button {
+.car-form button {
   background: #2daee0;
   color: #fff;
 }
 
-.add-car-form button:hover {
+.car-form button:hover {
   background: #2dade0d7;
   transition: all 0.4s ease-in-out;
 }

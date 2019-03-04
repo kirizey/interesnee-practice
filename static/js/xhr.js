@@ -13,8 +13,8 @@ const searchBar = document.querySelector("#header__search-bar");
 const searchInput = document.querySelector("#search-input");
 
 //dynamic form elements
-const carForm = document.querySelector(".add-car-form");
-const carFormTitle = document.querySelector("#add-car-form__title");
+const carForm = document.querySelector(".car-form");
+const carFormTitle = document.querySelector("#car-form__title");
 const submitFormButton = document.querySelector("#form-submit-btn");
 //year field in table
 const yearField = carForm.elements.year;
@@ -46,7 +46,7 @@ const toggleModal = () => modalWrapper.classList.toggle("hidden");
 //form method handler
 const toggleCarModalForm = (e, method) => {
   //prevent close modal while click on form
-  if (e.target.closest(".add-car-form")) return;
+  if (e.target.closest(".car-form")) return;
 
   //close modal by click outside form
   if (method === "closeModal") {
@@ -116,7 +116,7 @@ const formSubmit = async e => {
 
     await xhr.open("POST", apiUrl, false);
 
-    let formData = new FormData(document.querySelector(".add-car-form"));
+    let formData = new FormData(document.querySelector(".car-form"));
 
     await xhr.send(formData);
     if (xhr.readyState == 4 && xhr.status === 200) {
