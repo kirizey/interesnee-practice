@@ -1,42 +1,43 @@
 // table elements
-const tableBodyElement = document.querySelector(".cars-list__body");
-const tableElement = document.querySelector(".cars-list");
+const tableBodyElement = document.querySelector(".cars-list__body"),
+  tableElement = document.querySelector(".cars-list");
 
 //paginator elements
-const prevPageArrow = document.querySelector("#prev-page-arrow");
-const nextPageArrow = document.querySelector("#next-page-arrow");
-const totalPagesElement = document.querySelector(".pages__total");
-const currentPageElement = document.querySelector(".pages__current");
+const prevPageArrow = document.querySelector("#prev-page-arrow"),
+  nextPageArrow = document.querySelector("#next-page-arrow"),
+  totalPagesElement = document.querySelector(".pages__total"),
+  currentPageElement = document.querySelector(".pages__current");
 
 //searchbar elements
 const searchBar = document.querySelector("#header__search-bar");
 const searchInput = document.querySelector("#search-input");
 
 //dynamic form elements
-const carForm = document.querySelector(".car-form");
-const carFormTitle = document.querySelector("#car-form__title");
-const submitFormButton = document.querySelector("#form-submit-btn");
+const carForm = document.querySelector(".car-form"),
+  carFormTitle = document.querySelector("#car-form__title"),
+  submitFormButton = document.querySelector("#form-submit-btn"),
+  formBtns = document.querySelector(".car-form__btns");
+
 //year field in table
 const yearField = carForm.elements.year;
 
-const toggleCreateForm = document.querySelector("#add-car-btn");
-const modalWrapper = document.querySelector(".modal-wrapper");
+const toggleCreateForm = document.querySelector("#add-car-btn"),
+  modalWrapper = document.querySelector(".modal-wrapper");
 
 //table filter elements
-const producerSortFilter = document.querySelector("#producer-filter");
-const modelSortFilter = document.querySelector("#model-filter");
-const bodyTypeSortFilter = document.querySelector("#body-type-filter");
-const yearSortFilter = document.querySelector("#year-filter");
-const mileageSortFilter = document.querySelector("#mileage-filter");
-const descriptionSortFilter = document.querySelector("#description-filter");
-const createdSortFilter = document.querySelector("#created-filter");
-const updatedSortFilter = document.querySelector("#updated-filter");
+const producerSortFilter = document.querySelector("#producer-filter"),
+  modelSortFilter = document.querySelector("#model-filter"),
+  bodyTypeSortFilter = document.querySelector("#body-type-filter"),
+  yearSortFilter = document.querySelector("#year-filter"),
+  mileageSortFilter = document.querySelector("#mileage-filter"),
+  descriptionSortFilter = document.querySelector("#description-filter"),
+  createdSortFilter = document.querySelector("#created-filter"),
+  updatedSortFilter = document.querySelector("#updated-filter");
 
-let searchQuery = "";
-let sortBy = "";
-let sortOrder = "";
-
-let pageCars = [];
+let searchQuery = "",
+  sortBy = "",
+  sortOrder = "",
+  pageCars = [];
 
 const apiUrl = "https://backend-jscamp.saritasa-hosting.com/api/cars";
 
