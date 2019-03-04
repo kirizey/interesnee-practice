@@ -264,7 +264,8 @@ header {
   width: 300px;
   justify-content: space-between;
   align-items: center;
-  margin-top: 5px;
+  float: right;
+  margin: 5px 3px 5px 0;
 }
 
 /* modal styles */
