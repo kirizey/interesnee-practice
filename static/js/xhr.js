@@ -1,19 +1,28 @@
+// table elements
 const tableBodyElement = document.querySelector(".cars-list__body");
 const tableElement = document.querySelector(".cars-list");
 
+//paginator elements
 const prevPageArrow = document.querySelector("#prev-page-arrow");
 const nextPageArrow = document.querySelector("#next-page-arrow");
 const totalPagesElement = document.querySelector(".pages__total");
-
 const currentPageElement = document.querySelector(".pages__current");
 
+//searchbar elements
 const searchBar = document.querySelector("#header__search-bar");
 const searchInput = document.querySelector("#search-input");
 
+//dynamic form elements
 const carForm = document.querySelector(".add-car-form");
 const carFormTitle = document.querySelector("#add-car-form__title");
 const submitFormButton = document.querySelector("#form-submit-btn");
+//year field in table
+const yearField = carForm.elements.year;
 
+const toggleCreateForm = document.querySelector("#add-car-btn");
+const modalWrapper = document.querySelector(".modal-wrapper");
+
+//table filter elements
 const producerSortFilter = document.querySelector("#producer-filter");
 const modelSortFilter = document.querySelector("#model-filter");
 const bodyTypeSortFilter = document.querySelector("#body-type-filter");
@@ -23,11 +32,6 @@ const descriptionSortFilter = document.querySelector("#description-filter");
 const createdSortFilter = document.querySelector("#created-filter");
 const updatedSortFilter = document.querySelector("#updated-filter");
 
-const toggleCreateForm = document.querySelector("#add-car-btn");
-const modalWrapper = document.querySelector(".modal-wrapper");
-
-const yearField = carForm.elements.year;
-
 let searchQuery = "";
 let sortBy = "";
 let sortOrder = "";
@@ -36,9 +40,11 @@ let pageCars = [];
 
 const apiUrl = "https://backend-jscamp.saritasa-hosting.com/api/cars";
 
+// show/hide form toggler
 const toggleModal = () => modalWrapper.classList.toggle("hidden");
 
-const toggleCarModalForm = (e, method = "") => {
+//form method handler
+const toggleCarModalForm = (e, method) => {
   //prevent close modal while click on form
   if (e.target.closest(".add-car-form")) return;
 
@@ -110,6 +116,8 @@ const formSubmit = async e => {
 
     await xhr.open("POST", apiUrl, false);
 
+    let formData = new FormData(document.querySelector(".add-car-form"));
+
     await xhr.send(formData);
     if (xhr.readyState == 4 && xhr.status === 200) {
       pushPopup("Created");
@@ -121,7 +129,7 @@ const formSubmit = async e => {
   } else if (submitFormButton.getAttribute("data-put")) {
     let xhr = new XMLHttpRequest();
 
-    let body = {
+    let requestBody = {
       body_type_id: carForm.elements.body_type_id.value,
       make_id: carForm.elements.make_id.value,
       car_model_id: carForm.elements.car_model_id.value,
@@ -134,7 +142,7 @@ const formSubmit = async e => {
     await xhr.open("PUT", `${apiUrl}/${carId}`, false);
     await xhr.setRequestHeader("content-type", "application/json");
 
-    await xhr.send(JSON.stringify(body));
+    await xhr.send(JSON.stringify(requestBody));
 
     if (xhr.readyState == 4 && xhr.status === 200) {
       pushPopup("Updated");
@@ -155,25 +163,6 @@ const pushPopup = message => {
   document.querySelector("body").appendChild(errorDiv);
 
   setTimeout(() => errorDiv.remove(), 3000);
-};
-
-const openEditModal = async e => {
-  if (e.target.closest(".add-car-form")) return;
-
-  const carId = e.target.parentElement.getAttribute("data-id");
-
-  let xhr = new XMLHttpRequest();
-
-  await xhr.open("GET", `${apiUrl}/${carId}`, false);
-  await xhr.send();
-
-  if (xhr.readyState == 4 && xhr.status === 200) {
-    let car = JSON.parse(xhr.response);
-
-    toggleModal();
-  } else {
-    pushPopup("Connection error. Try one more time.");
-  }
 };
 
 //fill the row of table
@@ -266,7 +255,7 @@ const searchData = e => {
   getCars(`${apiUrl}?keyword=${e.target.elements.queryText.value}${sortQuery}`);
 };
 
-//pagination moving
+//pagination moving (next)
 const getNextPage = () => {
   let sortQuery = sortBy ? `&order_by=${sortBy}&sort_order=${sortOrder}` : "";
 
@@ -276,6 +265,7 @@ const getNextPage = () => {
   );
 };
 
+//pagination moving (previous)
 const getPrevPage = () => {
   let sortQuery = sortBy ? `&order_by=${sortBy}&sort_order=${sortOrder}` : "";
 
