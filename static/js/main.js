@@ -203,6 +203,7 @@ const updateCar = (e, carId) => {
       mileage: carForm.elements.mileage.value,
       description: carForm.elements.description.value
     };
+
     const response = carService.updateCar(carId, data);
 
     if (response.status === 200 && response.readyState === 4) {
@@ -226,51 +227,23 @@ const updateCar = (e, carId) => {
 };
 
 const validateCarForm = () => {
-  const bodyType = carForm.elements.body_type_id,
-    make = carForm.elements.make_id,
-    year = carForm.elements.year,
-    carModel = carForm.elements.car_model_id,
-    mileage = carForm.elements.mileage,
-    description = carForm.elements.description;
+  const year = carForm.elements.year;
 
   const currentYear = new Date().getFullYear();
 
   let index = 0;
 
-  resetError(bodyType);
-  if (!bodyType.value) {
-    rejectField(bodyType, "field is empty");
-    index = -1;
-  }
-  resetError(make);
-  if (!make.value) {
-    rejectField(make, "field is empty");
-    index = -1;
-  }
-  resetError(year);
-  if (!year.value) {
-    rejectField(year, "field is empty");
-    index = -1;
-  } else if (year.value < 1900 || year.value > currentYear) {
+  [...carForm].map(element => resetError(element));
+
+  [...carForm].map(element => {
+    if (element.tagName !== "BUTTON" && !element.value) {
+      rejectField(element, "field is empty");
+      index = -1;
+    }
+  });
+
+  if (year.value < 1900 || year.value > currentYear) {
     rejectField(year, `1900 < year < ${currentYear}`);
-    index = -1;
-  }
-
-  resetError(carModel);
-  if (!carModel.value) {
-    rejectField(carModel, "field is empty");
-    index = -1;
-  }
-
-  resetError(mileage);
-  if (!mileage.value) {
-    rejectField(mileage, "field is empty");
-    index = -1;
-  }
-
-  resetError(description);
-  if (!description.value) {
-    rejectField(description, "field is empty");
     index = -1;
   }
 
@@ -291,11 +264,14 @@ const resetError = element => {
 
   const parentBlock = element.parentElement;
   if (parentBlock.lastChild.className == "car-form__validation-error") {
-    parentBlock.removeChild(parentBlock.lastChild);
+    while (parentBlock.lastChild.className == "car-form__validation-error") {
+      parentBlock.removeChild(parentBlock.lastChild);
+    }
   }
 };
 
 const renderCreateForm = e => {
+  [...carForm].map(element => resetError(element));
   toggleModal();
 
   carFormTitle.innerText = `Add car`;
@@ -324,6 +300,7 @@ const renderCreateForm = e => {
 };
 
 const renderUpdateForm = (e, car) => {
+  [...carForm].map(element => resetError(element));
   toggleModal();
 
   carFormTitle.innerText = `Update car #${car.id}`;
