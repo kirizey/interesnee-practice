@@ -59,8 +59,8 @@ input {
 }
 
 .container {
-  max-width: 1300px;
-  margin: 0 auto;
+  /* max-width: 1300px; */
+  margin: 0 50px;
 }
 
 /* header styles */
@@ -82,8 +82,8 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  max-width: 1130px;
-  margin: 0 auto;
+  /* max-width: 1130px; */
+  margin: 0 50px;
   height: 100%;
 }
 
@@ -108,25 +108,31 @@ header {
   width: 400px;
   margin: 0 auto;
   background: #fff;
-  position: absolute;
   animation: slide-down 0.4s;
   position: relative;
 }
 
 .car-form__closer {
-  display: block;
-  color: #000;
-  font-size: 50px;
   position: absolute;
-  top: -15px;
-  right: 20px;
+  color: #000;
+  font-family: "Helvetica", "Arial", sans-serif;
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 5px;
+  right: 10px;
+  top: 10px;
+  cursor: pointer;
+  opacity: 0.3;
 }
 
 .car-form select,
 .car-form textarea,
 .car-form button,
 .car-form input {
-  margin-bottom: 10px;
+  margin: 2px 2px 10px 2px;
   border: 1px solid #ced4da;
   background: #fff;
   border-radius: 3px;
@@ -152,6 +158,37 @@ header {
   bottom: -4px;
 }
 
+.car-form button.delete {
+  background-color: #c82333;
+  border-color: #bd2130;
+  color: #fff;
+}
+
+.car-form button.delete:hover {
+  background-color: #b82030;
+}
+
+.car-form button.edit {
+  color: #212529;
+  background-color: #ffc107;
+  border-color: #ffc107;
+}
+
+.car-form button.edit:hover {
+  background-color: #f7b900;
+}
+
+.car-form button.primary {
+  background: #2daee0;
+  border-color: #2daee0;
+  color: #fff;
+  transition: all 0.4s ease-in-out;
+}
+
+.car-form button.primary:hover {
+  background: #2dade0d7;
+}
+
 .car-form textarea,
 .car-form button {
   width: 100%;
@@ -166,20 +203,18 @@ header {
   font-size: 14px;
 }
 
-.car-form button {
-  background: #2daee0;
-  color: #fff;
-}
-
-.car-form button:hover {
-  background: #2dade0d7;
-  transition: all 0.4s ease-in-out;
+.car-form__validation-error {
+  color: red;
+  font-size: 12px;
+  text-align: center;
+  margin-top: -5px;
+  margin-bottom: 5px;
 }
 
 .form-group {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  /* align-items: center; */
   margin: 0 20px;
 }
 
@@ -192,7 +227,7 @@ header {
 
 .cars-list th {
   padding: 5px;
-  vertical-align: top;
+  vertical-align: middle;
   border: 1px solid #dee2e6;
   font-weight: normal;
 }
@@ -215,7 +250,7 @@ header {
   text-align: center;
   margin: 60px 0 0 20px;
   top: 0;
-  padding: 40px;
+  padding: 30px;
   background-color: rgba(50, 50, 50, 0.685);
   box-shadow: rgba(0, 0, 0, 0.13) 0px 2px 6px 0px;
   color: aliceblue;
