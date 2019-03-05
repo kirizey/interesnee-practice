@@ -25,6 +25,9 @@
             />
             <button type="submit">Search</button>
           </form>
+          <button id="sign-in-toggle-btn" class="outline-primary">
+            Sign in</button
+          ><button id="register-toggle-btn" class="primary">Register</button>
         </div>
       </div>
     </header>
@@ -118,80 +121,113 @@
       </table>
     </main>
 
-    <div class="modal-wrapper hidden">
-      <form class="car-form">
-        <div class="car-form__closer"><span>X</span></div>
-        <h2 id="car-form__title">Add new car</h2>
+    <div class="modal-wrapper hidden" id="car-modal-wrapper">
+      <div class="modal">
+        <form class="car-form">
+          <div class="car-form__closer"><span>X</span></div>
+          <h2 id="car-form__title">Add new car</h2>
 
-        <div class="form-group">
-          <label for="bodyTypeName">Body type:</label>
-          <div class="form-group__input-wrapper">
-            <select name="body_type_id" id="bodyTypeName" required>
-              <option value="1">Convertible</option>
-              <option value="2">Coupe</option>
-              <option value="3">Sedan</option>
-            </select>
+          <div class="form-group">
+            <label for="bodyTypeName">Body type:</label>
+            <div class="form-group__input-wrapper">
+              <select name="body_type_id" id="bodyTypeName" required>
+                <option value="1">Convertible</option>
+                <option value="2">Coupe</option>
+                <option value="3">Sedan</option>
+              </select>
+            </div>
           </div>
-        </div>
 
-        <div class="form-group">
-          <label for="makeName">Make:</label>
-          <div class="form-group__input-wrapper">
-            <select name="make_id" id="makeName" required>
-              <option value="1">Kirlin-Stracke</option>
-              <option value="2">Muller, Goldner and Champlin</option>
-              <option value="3">Denesik Inc</option>
-            </select>
+          <div class="form-group">
+            <label for="makeName">Make:</label>
+            <div class="form-group__input-wrapper">
+              <select name="make_id" id="makeName" required>
+                <option value="1">Kirlin-Stracke</option>
+                <option value="2">Muller, Goldner and Champlin</option>
+                <option value="3">Denesik Inc</option>
+              </select>
+            </div>
           </div>
-        </div>
 
-        <div class="form-group">
-          <label for="carModel">Model:</label>
-          <div class="form-group__input-wrapper">
-            <select name="car_model_id" id="carModel" required>
-              <option value="1">Ohara</option>
-              <option value="2">Osinski</option>
-              <option value="7">Lang</option>
-              <option value="12">Stracke</option>
-              <option value="55">Wisoky</option>
-            </select>
+          <div class="form-group">
+            <label for="carModel">Model:</label>
+            <div class="form-group__input-wrapper">
+              <select name="car_model_id" id="carModel" required>
+                <option value="1">Ohara</option>
+                <option value="2">Osinski</option>
+                <option value="7">Lang</option>
+                <option value="12">Stracke</option>
+                <option value="55">Wisoky</option>
+              </select>
+            </div>
           </div>
-        </div>
 
-        <div class="form-group">
-          <label for="year">Year:</label>
-          <div class="form-group__input-wrapper">
-            <input name="year" type="number" min="1900" required />
+          <div class="form-group">
+            <label for="year">Year:</label>
+            <div class="form-group__input-wrapper">
+              <input name="year" type="number" min="1900" required />
+            </div>
           </div>
-        </div>
 
-        <div class="form-group">
-          <label for="mileage">Mileage</label>
-          <div class="form-group__input-wrapper">
-            <input type="number" name="mileage" id="mileage" required />
+          <div class="form-group">
+            <label for="mileage">Mileage:</label>
+            <div class="form-group__input-wrapper">
+              <input type="number" name="mileage" id="mileage" required />
+            </div>
           </div>
-        </div>
 
-        <div class="form-group">
-          <label for="carDescription">Description:</label>
-        </div>
-
-        <div class="form-group">
-          <div class="form-group__input-wrapper">
-            <textarea
-              name="description"
-              id="carDescription"
-              cols="40"
-              rows="10"
-              placeholder="Enter the car's description..."
-              name="description"
-              required
-            ></textarea>
+          <div class="form-group">
+            <label for="carDescription">Description:</label>
           </div>
-        </div>
 
-        <div class="form-group car-form__btns"></div>
-      </form>
+          <div class="form-group">
+            <div class="form-group__input-wrapper">
+              <textarea
+                name="description"
+                id="carDescription"
+                cols="40"
+                rows="10"
+                placeholder="Enter the car's description..."
+                name="description"
+                required
+              ></textarea>
+            </div>
+          </div>
+
+          <div class="form-group car-form__btns form__btns"></div>
+        </form>
+      </div>
+    </div>
+
+    <div class="modal-wrapper hidden" id="authentication-modal-wrapper">
+      <div class="modal">
+        <form class="authentication-form">
+          <h2 class="authentication-form__title">Sign in</h2>
+          <div class="form-group">
+            <label for="email">Email:</label>
+            <div class="form-group__input-wrapper">
+              <input type="email" id="email" name="email" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="username">Username:</label>
+            <div class="form-group__input-wrapper">
+              <input type="text" id="username" name="username" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="password">Password:</label>
+            <div class="form-group__input-wrapper">
+              <input type="password" id="password" name="password" />
+            </div>
+          </div>
+          <div class="form-group form__btns">
+            <button class="authentication-form__button primary" type="button">
+              Sign in
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
 
     <script src="./static/js/ui.js"></script>

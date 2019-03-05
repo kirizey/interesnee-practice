@@ -21,9 +21,6 @@ const carForm = document.querySelector(".car-form"),
 //year field in table
 const yearField = carForm.elements.year;
 
-const toggleCreateFormBtn = document.querySelector("#add-car-btn"),
-  modalWrapper = document.querySelector(".modal-wrapper");
-
 //table filter elements
 const producerSortFilter = document.querySelector("#producer-filter"),
   modelSortFilter = document.querySelector("#model-filter"),
@@ -34,7 +31,8 @@ const producerSortFilter = document.querySelector("#producer-filter"),
   createdSortFilter = document.querySelector("#created-filter"),
   updatedSortFilter = document.querySelector("#updated-filter");
 
-const modalCloser = document.querySelector(".car-form__closer");
+const authFormTitle = document.querySelector(".authentication-form__title"),
+  authFormBtn = document.querySelector(".authentication-form__button");
 
 const carService = new CarService();
 
@@ -171,7 +169,7 @@ const createCar = e => {
 
     if (response.status === 200 && response.readyState === 4) {
       snackbar("Created");
-      toggleModal();
+      toggleCarModal();
     } else {
       snackbar("Creation error");
     }
@@ -183,7 +181,7 @@ const deleteCar = (e, carId) => {
   setTimeout(() => {
     if (response.status !== 503) {
       snackbar("Deleted");
-      toggleModal();
+      toggleCarModal();
       document.querySelector(`[data-id='${carId}']`).remove();
     } else {
       snackbar("Server error. Try to delete one more time.");
@@ -208,7 +206,7 @@ const updateCar = (e, carId) => {
 
     if (response.status === 200 && response.readyState === 4) {
       snackbar("Updated");
-      toggleModal();
+      toggleCarModal();
       let updatedElement = document.querySelector(`[data-id='${carId}']`)
         .children;
       updatedElement[0].innerHTML = JSON.parse(response.response).make.name;
@@ -272,7 +270,7 @@ const resetError = element => {
 
 const renderCreateForm = e => {
   [...carForm].map(element => resetError(element));
-  toggleModal();
+  toggleCarModal();
 
   carFormTitle.innerText = `Add car`;
   yearField.removeAttribute("disabled");
@@ -301,7 +299,7 @@ const renderCreateForm = e => {
 
 const renderUpdateForm = (e, car) => {
   [...carForm].map(element => resetError(element));
-  toggleModal();
+  toggleCarModal();
 
   carFormTitle.innerText = `Update car #${car.id}`;
 
@@ -311,15 +309,6 @@ const renderUpdateForm = (e, car) => {
   carForm.elements.car_model_id.value = car.car_model_id;
   carForm.elements.mileage.value = car.mileage;
   carForm.elements.description.value = car.description;
-
-  const data = {
-    body_type_id: carForm.elements.body_type_id.value,
-    make_id: carForm.elements.make_id.value,
-    year: carForm.elements.year.value,
-    car_model_id: carForm.elements.car_model_id.value,
-    mileage: carForm.elements.mileage.value,
-    description: carForm.elements.description.value
-  };
 
   yearField.setAttribute("disabled", true);
   deleteCarBtn.innerText = "Delete";
@@ -342,6 +331,18 @@ const renderUpdateForm = (e, car) => {
 
   updateCarBtn.addEventListener("click", e => updateCar(e, car.id));
   deleteCarBtn.addEventListener("click", e => deleteCar(e, car.id));
+};
+
+const renderSignInForm = e => {
+  authFormTitle.innerText = "Sign in";
+  authFormBtn.innerText = "Login";
+  toggleAuthModal();
+};
+
+const renderRegisterForm = e => {
+  authFormTitle.innerText = "Register";
+  authFormBtn.innerText = "Create user";
+  toggleAuthModal();
 };
 
 //save the search text
@@ -375,10 +376,8 @@ updatedSortFilter.addEventListener("change", e => sortList("updated_at", e));
 
 toggleCreateFormBtn.addEventListener("click", renderCreateForm);
 
-modalCloser.addEventListener("click", toggleModal);
+modalCloser.addEventListener("click", toggleCarModal);
 
-window.addEventListener("keydown", e => {
-  if (e.keyCode === 27 && !modalWrapper.classList.contains("hidden")) {
-    toggleModal();
-  }
-});
+toggleSignInModalBtn.addEventListener("click", renderSignInForm);
+
+togglRegisterModalBtn.addEventListener("click", renderRegisterForm);
