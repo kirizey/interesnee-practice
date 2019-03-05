@@ -188,9 +188,14 @@ const deleteCar = (e, carId) => {
   carService
     .deleteCar(carId)
     .then(() => {
+      const carElement = document.querySelector(`[data-id='${carId}']`);
+
+      if (!carElement) return;
+
       snackbar(`Car №${carId} was deleted`);
       carModalWrapper.classList.add("hidden");
-      document.querySelector(`[data-id='${carId}']`).remove();
+
+      carElement.remove();
     })
     .catch(error => snackbar(error));
 };

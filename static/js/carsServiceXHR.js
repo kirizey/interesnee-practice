@@ -84,7 +84,15 @@ class CarService {
         }
       };
       xhr.send(JSON.stringify(data));
-    });
+    })
+      .then(response => {
+        return response;
+      })
+      .catch(error => {
+        if (error.code === 503) {
+          return this.updateCar(carId, data);
+        }
+      });
   };
 
   deleteCar = carId => {
@@ -103,6 +111,17 @@ class CarService {
       };
 
       xhr.send();
-    });
+    })
+      .then(response => {
+        return response;
+      })
+      .catch(error => {
+        if (error.code === 503) {
+          return this.deleteCar(carId);
+        }
+        if (error.code === 404) {
+          return;
+        }
+      });
   };
 }
