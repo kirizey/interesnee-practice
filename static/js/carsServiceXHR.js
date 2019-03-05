@@ -19,13 +19,10 @@ class CarService {
         if (xhr.status == 200 && xhr.readyState === 4) {
           resolve(JSON.parse(xhr.response));
         } else {
-          var error = new Error(xhr.status);
+          var error = new NetworkError(xhr.status);
           error.code = xhr.status;
           reject(error);
         }
-        xhr.onerror = () => {
-          reject(new Error("Network Error"));
-        };
       };
 
       xhr.send();
@@ -120,8 +117,14 @@ class CarService {
           return this.deleteCar(carId);
         }
         if (error.code === 404) {
-          return;
+          throw new Error("Element was deleted...");
         }
       });
   };
 }
+// class NetworkError extends Error {
+//   constructor(...args) {
+//     super(...args);
+//     Error.captureStackTrace(this, NetworkError);
+//   }
+// }

@@ -7,6 +7,10 @@ body {
   overflow-x: hidden;
 }
 
+body.modal-opened {
+  overflow: hidden;
+}
+
 h2,
 label {
   color: hsl(207, 8%, 21%);
@@ -174,27 +178,6 @@ header {
 }
 
 /* create car form styles */
-.car-form__closer {
-  position: absolute;
-  color: #000;
-  font-family: "Helvetica", "Arial", sans-serif;
-  font-size: 20px;
-  font-weight: bold;
-  text-align: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 5px;
-  right: 10px;
-  top: 10px;
-  cursor: pointer;
-  opacity: 0.3;
-  transition: 0.3s;
-}
-
-.car-form__closer:hover {
-  opacity: 0.6;
-}
-
 .car-form button.delete {
   background-color: #c82333;
   border-color: #bd2130;

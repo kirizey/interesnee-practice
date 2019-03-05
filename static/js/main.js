@@ -13,8 +13,7 @@ const searchBar = document.querySelector("#header__search-bar");
 const searchInput = document.querySelector("#search-input");
 
 //dynamic form elements
-const carForm = document.querySelector(".car-form"),
-  carFormTitle = document.querySelector("#car-form__title"),
+const carFormTitle = document.querySelector("#car-form__title"),
   submitFormButton = document.querySelector("#form-submit-btn"),
   formBtns = document.querySelector(".car-form__btns");
 
@@ -31,9 +30,11 @@ const producerSortFilter = document.querySelector("#producer-filter"),
   createdSortFilter = document.querySelector("#created-filter"),
   updatedSortFilter = document.querySelector("#updated-filter");
 
+//elements of authentication form
 const authFormTitle = document.querySelector(".authentication-form__title"),
   authFormBtn = document.querySelector(".authentication-form__button");
 
+//service provide api methods
 const carService = new CarService();
 
 let cars = [],
@@ -41,9 +42,10 @@ let cars = [],
   sortBy,
   sortOrder = "";
 
+//btns on car form
 const createCarBtn = document.createElement("button");
-const deleteCarBtn = document.createElement("button");
-const updateCarBtn = document.createElement("button");
+let deleteCarBtn = document.createElement("button"),
+  updateCarBtn = document.createElement("button");
 
 //fill the row of table
 const appendCarInstanceInTable = car => {
@@ -88,6 +90,7 @@ const appendCarInstanceInTable = car => {
   tableBodyElement.appendChild(tr);
 };
 
+//common method for render list of cars data
 const renderList = carsData => {
   while (tableBodyElement.firstChild) {
     tableBodyElement.removeChild(tableBodyElement.firstChild);
@@ -114,11 +117,13 @@ const renderList = carsData => {
   cars.map(car => appendCarInstanceInTable(car));
 };
 
+//initial showing data
 carService
   .getCars()
   .then(data => renderList(data))
   .catch(error => snackbar(error));
 
+//find method
 const searchData = e => {
   e.preventDefault();
   carService
@@ -127,6 +132,7 @@ const searchData = e => {
     .catch(error => snackbar(error));
 };
 
+//pagination: get next page
 const getNextPage = () => {
   carService
     .getCars(
@@ -139,6 +145,7 @@ const getNextPage = () => {
     .catch(error => snackbar(error));
 };
 
+//pagination: get previous page
 const getPreviousPage = () => {
   carService
     .getCars(
@@ -151,6 +158,7 @@ const getPreviousPage = () => {
     .catch(error => snackbar(error));
 };
 
+//sort data in chosen order
 const sortList = (field, e) => {
   sortBy = field;
   sortOrder = e.target.value;
@@ -161,6 +169,7 @@ const sortList = (field, e) => {
     .catch(error => snackbar(error));
 };
 
+//create car method
 const createCar = e => {
   let validation = validateCarForm();
 
@@ -184,12 +193,14 @@ const createCar = e => {
   }
 };
 
-const deleteCar = (e, carId) => {
+//delete car method
+const deleteCar = carId => {
   carService
     .deleteCar(carId)
-    .then(() => {
+    .then(res => {
       const carElement = document.querySelector(`[data-id='${carId}']`);
-
+      console.log(carId);
+      console.log(carElement);
       if (!carElement) return;
 
       snackbar(`Car №${carId} was deleted`);
@@ -200,7 +211,8 @@ const deleteCar = (e, carId) => {
     .catch(error => snackbar(error));
 };
 
-const updateCar = (e, carId) => {
+//update car method
+const updateCar = carId => {
   let validation = validateCarForm();
 
   if (validation === 0) {
@@ -244,6 +256,7 @@ const updateCar = (e, carId) => {
   }
 };
 
+//validate car form on required fields and year range
 const validateCarForm = () => {
   const year = carForm.elements.year;
 
@@ -277,6 +290,7 @@ const rejectField = (element, message) => {
   element.parentElement.appendChild(error);
 };
 
+//reset rejected field after validation
 const resetError = element => {
   element.classList.remove("rejected");
 
@@ -288,6 +302,7 @@ const resetError = element => {
   }
 };
 
+//render create form method
 const renderCreateForm = e => {
   [...carForm].map(element => resetError(element));
   toggleCarModal();
@@ -317,9 +332,18 @@ const renderCreateForm = e => {
   carForm.elements.description.value = "";
 };
 
+//render update form method
 const renderUpdateForm = (e, car) => {
   [...carForm].map(element => resetError(element));
   toggleCarModal();
+
+  let cloneDeleteBtn = deleteCarBtn.cloneNode(true);
+  deleteCarBtn.remove();
+  deleteCarBtn = cloneDeleteBtn;
+
+  let cloneUpdateBtn = updateCarBtn.cloneNode(true);
+  updateCarBtn.remove();
+  updateCarBtn = cloneUpdateBtn;
 
   carFormTitle.innerText = `Update car №${car.id}`;
 
@@ -349,55 +373,47 @@ const renderUpdateForm = (e, car) => {
   updateCarBtn.classList.add("edit");
   updateCarBtn.setAttribute("type", "button");
 
-  updateCarBtn.addEventListener("click", e => updateCar(e, car.id));
-  deleteCarBtn.addEventListener("click", e => deleteCar(e, car.id));
+  updateCarBtn.addEventListener("click", () => updateCar(car.id));
+  deleteCarBtn.addEventListener("click", () => deleteCar(car.id));
 };
 
+// render sign in form
 const renderSignInForm = e => {
   authFormTitle.innerText = "Sign in";
   authFormBtn.innerText = "Login";
   toggleAuthModal();
 };
 
+// render sign up method
 const renderRegisterForm = e => {
   authFormTitle.innerText = "Register";
   authFormBtn.innerText = "Create user";
   toggleAuthModal();
 };
 
-//save the search text
+// save the search text in variable
 searchInput.addEventListener("keydown", e => (searchQuery = e.target.value));
 
+// event listner for make search request
 searchBar.addEventListener("submit", searchData);
 
+//pagination request events
 nextPageArrow.addEventListener("click", getNextPage);
 prevPageArrow.addEventListener("click", getPreviousPage);
 
 //listners for sort query
 producerSortFilter.addEventListener("change", e => sortList("make.name", e));
-
 modelSortFilter.addEventListener("change", e => sortList("car_model.name", e));
-
 bodyTypeSortFilter.addEventListener("change", e =>
   sortList("body_type.name", e)
 );
-
 yearSortFilter.addEventListener("change", e => sortList("year", e));
-
 mileageSortFilter.addEventListener("change", e => sortList("mileage", e));
-
 descriptionSortFilter.addEventListener("change", e =>
   sortList("description", e)
 );
-
 createdSortFilter.addEventListener("change", e => sortList("created_at", e));
-
 updatedSortFilter.addEventListener("change", e => sortList("updated_at", e));
-
 toggleCreateFormBtn.addEventListener("click", renderCreateForm);
-
-modalCloser.addEventListener("click", toggleCarModal);
-
 toggleSignInModalBtn.addEventListener("click", renderSignInForm);
-
 togglRegisterModalBtn.addEventListener("click", renderRegisterForm);
