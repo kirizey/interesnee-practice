@@ -11,7 +11,7 @@ const snackbar = message => {
   errorDiv.classList.add("cars-list__error-msg");
   document.querySelector("body").appendChild(errorDiv);
 
-  setTimeout(() => errorDiv.remove(), 3000);
+  setTimeout(() => errorDiv.remove(), 2000);
 };
 
 const toggleCarModal = () => carModalWrapper.classList.toggle("hidden");

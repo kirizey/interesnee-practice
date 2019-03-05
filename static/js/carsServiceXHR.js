@@ -2,27 +2,55 @@ class CarService {
   API_URL = "https://backend-jscamp.saritasa-hosting.com/api/cars";
 
   getCars = (page = 1, searchQuery = "", orderBy, sortOrder = "asc") => {
-    const xhr = new XMLHttpRequest();
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
 
-    if (orderBy) {
-      xhr.open(
-        "GET",
-        `${
-          this.API_URL
-        }?page=${page}&keyword=${searchQuery}&order_by=${orderBy}&sort_order=${sortOrder}`,
-        false
-      );
-      xhr.send();
-    } else {
-      xhr.open(
-        "GET",
-        `${this.API_URL}?page=${page}&keyword=${searchQuery}`,
-        false
-      );
-      xhr.send();
-    }
+      if (orderBy) {
+        xhr.open(
+          "GET",
+          `${
+            this.API_URL
+          }?page=${page}&keyword=${searchQuery}&order_by=${orderBy}&sort_order=${sortOrder}`,
+          false
+        );
+        xhr.onload = () => {
+          if (xhr.status == 200 && xhr.readyState === 4) {
+            resolve(JSON.parse(xhr.response));
+          } else {
+            var error = new Error(xhr.status);
+            console.log(xhr.status);
+            error.code = xhr.status;
+            reject(error);
+          }
+          xhr.onerror = () => {
+            reject(new Error("Network Error"));
+          };
+        };
+        xhr.send();
+      } else {
+        xhr.open(
+          "GET",
+          `${this.API_URL}?page=${page}&keyword=${searchQuery}`,
+          false
+        );
+        xhr.onload = () => {
+          if (xhr.status == 200 && xhr.readyState === 4) {
+            resolve(JSON.parse(xhr.response));
+          } else {
+            var error = new Error(xhr.status);
+            console.log(xhr.status);
+            error.code = xhr.status;
+            reject(error);
+          }
+        };
 
-    return JSON.parse(xhr.response);
+        xhr.onerror = () => {
+          reject(new Error("Network Error"));
+        };
+
+        xhr.send();
+      }
+    });
   };
 
   createCar = data => {

@@ -52,7 +52,7 @@ const appendCarInstanceInTable = car => {
 
   let make = document.createElement("th");
   make.innerHTML = car.make.name;
-  make.addEventListener("click", e => renderUpdateForm(e, car));
+  // make.addEventListener("click", e => renderUpdateForm(e, car));
   tr.appendChild(make);
 
   let model = document.createElement("th");
@@ -89,68 +89,77 @@ const appendCarInstanceInTable = car => {
 };
 
 const renderList = carsData => {
-  if (carsData.results) {
-    while (tableBodyElement.firstChild) {
-      tableBodyElement.removeChild(tableBodyElement.firstChild);
-    }
-
-    cars = [...carsData.results];
-
-    let paginationData = carsData.pagination;
-
-    currentPageElement.innerText = paginationData.current_page;
-
-    paginationData.current_page === 1
-      ? prevPageArrow.setAttribute("disabled", true)
-      : prevPageArrow.removeAttribute("disabled", true);
-
-    totalPagesElement.innerText = paginationData.total_pages;
-
-    paginationData.total_pages === parseInt(currentPageElement.innerText)
-      ? nextPageArrow.setAttribute("disabled", true)
-      : nextPageArrow.removeAttribute("disabled", true);
-
-    //fill table
-    cars.length > 0 ? cars.map(car => appendCarInstanceInTable(car)) : null;
-  } else {
-    snackbar("Connection error, try again");
+  while (tableBodyElement.firstChild) {
+    tableBodyElement.removeChild(tableBodyElement.firstChild);
   }
+
+  cars = [...carsData.results];
+
+  let paginationData = carsData.pagination;
+
+  currentPageElement.innerText = paginationData.current_page;
+
+  paginationData.current_page === 1
+    ? prevPageArrow.setAttribute("disabled", true)
+    : prevPageArrow.removeAttribute("disabled", true);
+
+  totalPagesElement.innerText = paginationData.total_pages;
+
+  paginationData.total_pages === parseInt(currentPageElement.innerText)
+    ? nextPageArrow.setAttribute("disabled", true)
+    : nextPageArrow.removeAttribute("disabled", true);
+
+  //fill table
+  cars.map(car => appendCarInstanceInTable(car));
 };
-renderList(carService.getCars());
+
+carService
+  .getCars()
+  .then(data => renderList(data))
+  .catch(error => snackbar(error));
+
+// renderList(carService.getCars());
 
 const searchData = e => {
   e.preventDefault();
-  const searchedCars = carService.getCars(1, e.target.elements.queryText.value);
-  renderList(searchedCars);
+  carService
+    .getCars(1, e.target.elements.queryText.value)
+    .then(data => renderList(data))
+    .catch(error => snackbar(error));
 };
 
 const getNextPage = () => {
-  const cars = carService.getCars(
-    parseInt(currentPageElement.innerText) + 1,
-    searchQuery,
-    sortBy,
-    sortOrder
-  );
-  renderList(cars);
+  carService
+    .getCars(
+      parseInt(currentPageElement.innerText) + 1,
+      searchQuery,
+      sortBy,
+      sortOrder
+    )
+    .then(data => renderList(data))
+    .catch(error => snackbar(error));
 };
 
 const getPreviousPage = () => {
-  const cars = carService.getCars(
-    parseInt(currentPageElement.innerText) - 1,
-    searchQuery,
-    sortBy,
-    sortOrder
-  );
-  renderList(cars);
+  carService
+    .getCars(
+      parseInt(currentPageElement.innerText) - 1,
+      searchQuery,
+      sortBy,
+      sortOrder
+    )
+    .then(data => renderList(data))
+    .catch(error => snackbar(error));
 };
 
 const sortList = (field, e) => {
   sortBy = field;
   sortOrder = e.target.value;
 
-  const cars = carService.getCars(1, "", sortBy, sortOrder);
-
-  renderList(cars);
+  carService
+    .getCars(1, "", sortBy, sortOrder)
+    .then(data => renderList(data))
+    .catch(error => snackbar(error));
 };
 
 const createCar = e => {
@@ -181,7 +190,7 @@ const deleteCar = (e, carId) => {
   setTimeout(() => {
     if (response.status !== 503) {
       snackbar("Deleted");
-      toggleCarModal();
+      carModalWrapper.classList.add("hidden");
       document.querySelector(`[data-id='${carId}']`).remove();
     } else {
       snackbar("Server error. Try to delete one more time.");
@@ -202,24 +211,21 @@ const updateCar = (e, carId) => {
       description: carForm.elements.description.value
     };
 
-    const response = carService.updateCar(carId, data);
+    const res = carService.updateCar(carId, data);
 
-    if (response.status === 200 && response.readyState === 4) {
+    if (res.status === 200 && res.readyState === 4) {
       snackbar("Updated");
-      toggleCarModal();
+      carModalWrapper.classList.add("hidden");
       let updatedElement = document.querySelector(`[data-id='${carId}']`)
         .children;
-      updatedElement[0].innerHTML = JSON.parse(response.response).make.name;
-      updatedElement[1].innerHTML = JSON.parse(
-        response.response
-      ).car_model.name;
-      updatedElement[2].innerHTML = JSON.parse(
-        response.response
-      ).body_type.name;
-      updatedElement[4].innerHTML = JSON.parse(response.response).mileage;
-      updatedElement[5].innerHTML = JSON.parse(response.response).description;
+
+      updatedElement[0].innerHTML = JSON.parse(res.response).make.name;
+      updatedElement[1].innerHTML = JSON.parse(res.response).car_model.name;
+      updatedElement[2].innerHTML = JSON.parse(res.response).body_type.name;
+      updatedElement[4].innerHTML = JSON.parse(res.response).mileage;
+      updatedElement[5].innerHTML = JSON.parse(res.response).description;
     } else {
-      snackbar("Server error. Try to delete one more time.");
+      snackbar("Server error. Try to update one more time.");
     }
   }
 };
