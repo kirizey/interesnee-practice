@@ -5,51 +5,39 @@ class CarService {
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
 
-      if (orderBy) {
-        xhr.open(
-          "GET",
-          `${
-            this.API_URL
-          }?page=${page}&keyword=${searchQuery}&order_by=${orderBy}&sort_order=${sortOrder}`,
-          false
-        );
-        xhr.onload = () => {
-          if (xhr.status == 200 && xhr.readyState === 4) {
-            resolve(JSON.parse(xhr.response));
-          } else {
-            var error = new Error(xhr.status);
-            console.log(xhr.status);
-            error.code = xhr.status;
-            reject(error);
-          }
-          xhr.onerror = () => {
-            reject(new Error("Network Error"));
-          };
-        };
-        xhr.send();
-      } else {
-        xhr.open(
-          "GET",
-          `${this.API_URL}?page=${page}&keyword=${searchQuery}`,
-          false
-        );
-        xhr.onload = () => {
-          if (xhr.status == 200 && xhr.readyState === 4) {
-            resolve(JSON.parse(xhr.response));
-          } else {
-            var error = new Error(xhr.status);
-            error.code = xhr.status;
-            reject(error);
-          }
-        };
+      const orderParam = orderBy
+        ? `&order_by=${orderBy}&sort_order=${sortOrder}`
+        : "";
 
+      xhr.open(
+        "GET",
+        `${this.API_URL}?page=${page}&keyword=${searchQuery}${orderParam}`,
+        false
+      );
+
+      xhr.onload = () => {
+        if (xhr.status == 200 && xhr.readyState === 4) {
+          resolve(JSON.parse(xhr.response));
+        } else {
+          var error = new Error(xhr.status);
+          error.code = xhr.status;
+          reject(error);
+        }
         xhr.onerror = () => {
           reject(new Error("Network Error"));
         };
+      };
 
-        xhr.send();
-      }
-    });
+      xhr.send();
+    })
+      .then(response => {
+        return response;
+      })
+      .catch(error => {
+        if (error.code === 503) {
+          return this.getCars(page, searchQuery, orderBy, sortOrder);
+        }
+      });
   };
 
   createCar = data => {

@@ -92,6 +92,7 @@ const renderList = carsData => {
   while (tableBodyElement.firstChild) {
     tableBodyElement.removeChild(tableBodyElement.firstChild);
   }
+  if (!carsData) return;
 
   cars = [...carsData.results];
 
@@ -117,8 +118,6 @@ carService
   .getCars()
   .then(data => renderList(data))
   .catch(error => snackbar(error));
-
-// renderList(carService.getCars());
 
 const searchData = e => {
   e.preventDefault();
