@@ -57,7 +57,15 @@ class CarService {
       };
 
       xhr.send(JSON.stringify(data));
-    });
+    })
+      .then(response => {
+        return response;
+      })
+      .catch(error => {
+        if (error.code === 503) {
+          return this.createCar(data);
+        }
+      });
   };
 
   updateCar = (carId, data) => {
