@@ -38,7 +38,6 @@ class CarService {
             resolve(JSON.parse(xhr.response));
           } else {
             var error = new Error(xhr.status);
-            console.log(xhr.status);
             error.code = xhr.status;
             reject(error);
           }
@@ -54,27 +53,60 @@ class CarService {
   };
 
   createCar = data => {
-    const xhr = new XMLHttpRequest();
-    xhr.open("POST", this.API_URL, false);
-    xhr.setRequestHeader("content-type", "application/json");
-    xhr.send(JSON.stringify(data));
-    return xhr;
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open("POST", this.API_URL, false);
+      xhr.setRequestHeader("content-type", "application/json");
+
+      xhr.onload = () => {
+        if (xhr.status == 200 && xhr.readyState === 4) {
+          resolve(xhr.status);
+        } else {
+          var error = new Error(xhr.status);
+          error.code = xhr.status;
+          reject(error);
+        }
+      };
+
+      xhr.send(JSON.stringify(data));
+    });
   };
 
   updateCar = (carId, data) => {
-    const xhr = new XMLHttpRequest();
-    xhr.open("PUT", `${this.API_URL}/${carId}`, false);
-    xhr.setRequestHeader("content-type", "application/json");
-    xhr.send(JSON.stringify(data));
-    return xhr;
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open("PUT", `${this.API_URL}/${carId}`, false);
+      xhr.setRequestHeader("content-type", "application/json");
+
+      xhr.onload = () => {
+        if (xhr.status === 200 && xhr.readyState === 4) {
+          resolve(xhr.status);
+        } else {
+          var error = new Error(xhr.status);
+          error.code = xhr.status;
+          reject(error);
+        }
+      };
+      xhr.send(JSON.stringify(data));
+    });
   };
 
   deleteCar = carId => {
-    const xhr = new XMLHttpRequest();
-    xhr.open("DELETE", `${this.API_URL}/${carId}`);
-    xhr.send();
-    if (xhr.status !== 400 && xhr.status !== 503) {
-      return xhr;
-    }
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open("DELETE", `${this.API_URL}/${carId}`);
+
+      xhr.onload = () => {
+        if (xhr.status === 204 && xhr.readyState === 4) {
+          resolve(xhr.status);
+        } else {
+          var error = new Error(xhr.status);
+          error.code = xhr.status;
+          reject(error);
+        }
+      };
+
+      xhr.send();
+    });
   };
 }

@@ -52,7 +52,7 @@ const appendCarInstanceInTable = car => {
 
   let make = document.createElement("th");
   make.innerHTML = car.make.name;
-  // make.addEventListener("click", e => renderUpdateForm(e, car));
+  make.addEventListener("click", e => renderUpdateForm(e, car));
   tr.appendChild(make);
 
   let model = document.createElement("th");
@@ -174,59 +174,69 @@ const createCar = e => {
       description: carForm.description.value,
       mileage: carForm.mileage.value
     };
-    const response = carService.createCar(car);
 
-    if (response.status === 200 && response.readyState === 4) {
-      snackbar("Created");
-      toggleCarModal();
-    } else {
-      snackbar("Creation error");
-    }
+    carService
+      .createCar(car)
+      .then(res => {
+        snackbar("Created");
+        carModalWrapper.classList.add("hidden");
+      })
+      .catch(error => snackbar(error));
   }
 };
 
 const deleteCar = (e, carId) => {
-  const response = carService.deleteCar(carId);
-  setTimeout(() => {
-    if (response.status !== 503) {
-      snackbar("Deleted");
+  carService
+    .deleteCar(carId)
+    .then(() => {
+      snackbar(`Car №${carId} was deleted`);
       carModalWrapper.classList.add("hidden");
       document.querySelector(`[data-id='${carId}']`).remove();
-    } else {
-      snackbar("Server error. Try to delete one more time.");
-    }
-  }, 500);
+    })
+    .catch(error => snackbar(error));
 };
 
 const updateCar = (e, carId) => {
   let validation = validateCarForm();
 
   if (validation === 0) {
+    const bodyTypeElement = carForm.elements.body_type_id,
+      makeElement = carForm.elements.make_id,
+      yearElement = carForm.elements.year,
+      carModelElement = carForm.elements.car_model_id,
+      mileageElement = carForm.elements.mileage,
+      descriptionElement = carForm.elements.description;
+
     const data = {
-      body_type_id: carForm.elements.body_type_id.value,
-      make_id: carForm.elements.make_id.value,
-      year: carForm.elements.year.value,
-      car_model_id: carForm.elements.car_model_id.value,
-      mileage: carForm.elements.mileage.value,
-      description: carForm.elements.description.value
+      body_type_id: bodyTypeElement.value,
+      make_id: makeElement.value,
+      year: yearElement.value,
+      car_model_id: carModelElement.value,
+      mileage: mileageElement.value,
+      description: descriptionElement.value
     };
 
-    const res = carService.updateCar(carId, data);
+    carService
+      .updateCar(carId, data)
+      .then(() => {
+        snackbar(`Car №${carId} was updated`);
+        carModalWrapper.classList.add("hidden");
 
-    if (res.status === 200 && res.readyState === 4) {
-      snackbar("Updated");
-      carModalWrapper.classList.add("hidden");
-      let updatedElement = document.querySelector(`[data-id='${carId}']`)
-        .children;
+        let updatedElement = document.querySelector(`[data-id='${carId}']`)
+          .children;
 
-      updatedElement[0].innerHTML = JSON.parse(res.response).make.name;
-      updatedElement[1].innerHTML = JSON.parse(res.response).car_model.name;
-      updatedElement[2].innerHTML = JSON.parse(res.response).body_type.name;
-      updatedElement[4].innerHTML = JSON.parse(res.response).mileage;
-      updatedElement[5].innerHTML = JSON.parse(res.response).description;
-    } else {
-      snackbar("Server error. Try to update one more time.");
-    }
+        updatedElement[0].innerHTML =
+          makeElement.options[makeElement.selectedIndex].text;
+        updatedElement[1].innerHTML =
+          carModelElement.options[carModelElement.selectedIndex].text;
+        updatedElement[2].innerHTML =
+          bodyTypeElement.options[bodyTypeElement.selectedIndex].text;
+        updatedElement[4].innerHTML = mileageElement.value;
+        updatedElement[5].innerHTML = descriptionElement.value;
+      })
+      .catch(error => {
+        snackbar(error);
+      });
   }
 };
 
@@ -307,7 +317,7 @@ const renderUpdateForm = (e, car) => {
   [...carForm].map(element => resetError(element));
   toggleCarModal();
 
-  carFormTitle.innerText = `Update car #${car.id}`;
+  carFormTitle.innerText = `Update car №${car.id}`;
 
   carForm.elements.body_type_id.value = car.body_type_id;
   carForm.elements.make_id.value = car.make_id;
