@@ -1,7 +1,21 @@
 /**
+ * Create an error mathod.
+ *
+ * @param {number} status Error status.
+ * @returns {Error} Return error.
+ */
+const pushError = status => {
+  const error = new Error(status);
+
+  error.code = status;
+
+  return error;
+};
+
+/**
  * Method set to api using XMLHttpRequest
  */
-class CarService {
+export class CarService {
   /**
    * Costant api endpoint.
    */
@@ -28,14 +42,10 @@ class CarService {
         xhr.open('GET', `${this.apiUrl}?page=${page}&keyword=${searchQuery}${orderParam}`, false);
 
         xhr.onload = () => {
-          if (xhr.status === 200 && xhr.readyState === 4) {
-            resolve(JSON.parse(xhr.response));
-          } else {
-            const error = new Error(xhr.status);
-
-            error.code = xhr.status;
-            reject(error);
-          }
+          // eslint-disable-next-line no-unused-expressions
+          xhr.status === 200 && xhr.readyState === 4
+            ? resolve(JSON.parse(xhr.response))
+            : reject(pushError(xhr.status));
         };
 
         xhr.send();
@@ -43,9 +53,7 @@ class CarService {
         .then(response => response)
         // eslint-disable-next-line consistent-return
         .catch(error => {
-          if (error.code === 503) {
-            return this.getCars(page, searchQuery, orderBy, sortOrder);
-          }
+          if (error.code === 503) return this.getCars(page, searchQuery, orderBy, sortOrder);
         })
     );
   }
@@ -66,14 +74,10 @@ class CarService {
         xhr.setRequestHeader('content-type', 'application/json');
 
         xhr.onload = () => {
-          if (xhr.status === 200 && xhr.readyState === 4) {
-            resolve(xhr.status);
-          } else {
-            const error = new Error(xhr.status);
-
-            error.code = xhr.status;
-            reject(error);
-          }
+          // eslint-disable-next-line no-unused-expressions
+          xhr.status === 200 && xhr.readyState === 4
+            ? resolve(xhr.status)
+            : reject(pushError(xhr.status));
         };
 
         xhr.send(JSON.stringify(data));
@@ -81,9 +85,7 @@ class CarService {
         .then(response => response)
         // eslint-disable-next-line consistent-return
         .catch(error => {
-          if (error.code === 503) {
-            return this.createCar(data);
-          }
+          if (error.code === 503) return this.createCar(data);
         })
     );
   }
@@ -104,23 +106,17 @@ class CarService {
         xhr.setRequestHeader('content-type', 'application/json');
 
         xhr.onload = () => {
-          if (xhr.status === 200 && xhr.readyState === 4) {
-            resolve(xhr.status);
-          } else {
-            const error = new Error(xhr.status);
-
-            error.code = xhr.status;
-            reject(error);
-          }
+          // eslint-disable-next-line no-unused-expressions
+          xhr.status === 200 && xhr.readyState === 4
+            ? resolve(xhr.status)
+            : reject(pushError(xhr.status));
         };
         xhr.send(JSON.stringify(data));
       })
         .then(response => response)
         // eslint-disable-next-line consistent-return
         .catch(error => {
-          if (error.code === 503) {
-            return this.updateCar(carId, data);
-          }
+          if (error.code === 503) return this.updateCar(carId, data);
         })
     );
   }
@@ -139,14 +135,10 @@ class CarService {
         xhr.open('DELETE', `${this.apiUrl}/${carId}`);
 
         xhr.onload = () => {
-          if (xhr.status === 204 && xhr.readyState === 4) {
-            resolve(xhr.status);
-          } else {
-            const error = new Error(xhr.status);
-
-            error.code = xhr.status;
-            reject(error);
-          }
+          // eslint-disable-next-line no-unused-expressions
+          (xhr.status === 204 || xhr.status === 200) && xhr.readyState === 4
+            ? resolve(xhr.status)
+            : reject(pushError(xhr.status));
         };
 
         xhr.send();
@@ -154,21 +146,10 @@ class CarService {
         .then(response => response)
         // eslint-disable-next-line consistent-return
         .catch(error => {
-          if (error.code === 503) {
-            return this.deleteCar(carId);
-          }
+          if (error.code === 503) return this.deleteCar(carId);
 
-          if (error.code === 404) {
-            throw new Error('Element was deleted...');
-          }
+          if (error.code === 404) throw new Error('Element was deleted...');
         })
     );
   }
 }
-
-// class NetworkError extends Error {
-//   constructor(...args) {
-//     super(...args);
-//     Error.captureStackTrace(this, NetworkError);
-//   }
-// }

@@ -1,3 +1,6 @@
+// eslint-disable-next-line import/extensions
+import { CarService } from './carsServiceXHR.js';
+
 // table elements
 const tableBodyElement = document.querySelector('.cars-list__body');
 
@@ -48,7 +51,6 @@ const bodyElement = document.querySelector('body');
 const yearField = carForm.elements.year;
 
 // service provide api methods
-// eslint-disable-next-line no-undef
 const carService = new CarService();
 
 let cars = [];
@@ -66,7 +68,7 @@ let updateCarBtn = document.createElement('button');
  *
  * @param {string} message Message text need to show in snackbar.
  */
-const snackbar = message => {
+const pushSnackbar = message => {
   const errorDiv = document.createElement('div');
 
   errorDiv.innerText = message;
@@ -197,7 +199,7 @@ const updateCar = carId => {
     carService
       .updateCar(carId, data)
       .then(() => {
-        snackbar(`Car №${carId} was updated`);
+        pushSnackbar(`Car №${carId} was updated`);
         carModalWrapper.classList.add('hidden');
 
         const updatedElement = document.querySelector(`[data-id='${carId}']`).children;
@@ -209,7 +211,7 @@ const updateCar = carId => {
         updatedElement[5].innerHTML = descriptionElement.value;
       })
       .catch(error => {
-        snackbar(error);
+        pushSnackbar(error);
       });
   }
 };
@@ -227,12 +229,12 @@ const deleteCar = carId => {
 
       if (!carElement) return;
 
-      snackbar(`Car №${carId} was deleted`);
+      pushSnackbar(`Car №${carId} was deleted`);
       carModalWrapper.classList.add('hidden');
 
       carElement.remove();
     })
-    .catch(error => snackbar(error));
+    .catch(error => pushSnackbar(error));
 };
 
 /**
@@ -356,7 +358,7 @@ const appendCarInstanceInTable = car => {
  * @param {Object} carsData Cata obout cars: {results:[cars array],
  *                          pagination: {current_page, total_pages}}.
  */
-const renderList = carsData => {
+const renderTable = carsData => {
   while (tableBodyElement.firstChild) {
     tableBodyElement.removeChild(tableBodyElement.firstChild);
   }
@@ -387,8 +389,8 @@ const renderList = carsData => {
 // initial showing data
 carService
   .getCars()
-  .then(data => renderList(data))
-  .catch(error => snackbar(error));
+  .then(data => renderTable(data))
+  .catch(error => pushSnackbar(error));
 
 /**
  * Find method.
@@ -399,8 +401,8 @@ const searchData = e => {
   e.preventDefault();
   carService
     .getCars(1, e.target.elements.queryText.value, sortBy, sortOrder)
-    .then(data => renderList(data))
-    .catch(error => snackbar(error));
+    .then(data => renderTable(data))
+    .catch(error => pushSnackbar(error));
 };
 
 /**
@@ -409,8 +411,8 @@ const searchData = e => {
 const getNextPage = () => {
   carService
     .getCars(parseInt(currentPageElement.innerText, 10) + 1, searchQuery, sortBy, sortOrder)
-    .then(data => renderList(data))
-    .catch(error => snackbar(error));
+    .then(data => renderTable(data))
+    .catch(error => pushSnackbar(error));
 };
 
 /**
@@ -419,8 +421,8 @@ const getNextPage = () => {
 const getPreviousPage = () => {
   carService
     .getCars(parseInt(currentPageElement.innerText, 10) - 1, searchQuery, sortBy, sortOrder)
-    .then(data => renderList(data))
-    .catch(error => snackbar(error));
+    .then(data => renderTable(data))
+    .catch(error => pushSnackbar(error));
 };
 
 /**
@@ -435,8 +437,8 @@ const sortList = (field, e) => {
 
   carService
     .getCars(1, '', sortBy, sortOrder)
-    .then(data => renderList(data))
-    .catch(error => snackbar(error));
+    .then(data => renderTable(data))
+    .catch(error => pushSnackbar(error));
 };
 
 /**
@@ -458,10 +460,10 @@ const createCar = () => {
     carService
       .createCar(car)
       .then(() => {
-        snackbar('Created');
+        pushSnackbar('Created');
         carModalWrapper.classList.add('hidden');
       })
-      .catch(error => snackbar(error));
+      .catch(error => pushSnackbar(error));
   }
 };
 
@@ -549,27 +551,21 @@ togglRegisterModalBtn.addEventListener('click', renderRegisterForm);
 
 // close modal on key "escape"
 window.addEventListener('keydown', e => {
-  if (e.keyCode === 27 && !carModalWrapper.classList.contains('hidden')) {
-    toggleCarModal();
-  }
+  if (e.keyCode === 27 && !carModalWrapper.classList.contains('hidden')) toggleCarModal();
 
-  if (e.keyCode === 27 && !authModalWrapper.classList.contains('hidden')) {
-    toggleAuthModal();
-  }
+  if (e.keyCode === 27 && !authModalWrapper.classList.contains('hidden')) toggleAuthModal();
 });
 
 // close modal on click outside form
 carModalWrapper.addEventListener('click', e => {
   const isClickInsideCarForm = carForm.contains(e.target);
 
-  if (!isClickInsideCarForm && !carForm.classList.contains('hidden')) {
+  if (!isClickInsideCarForm && !carForm.classList.contains('hidden'))
     carModalWrapper.classList.add('hidden');
-  }
 });
 authModalWrapper.addEventListener('click', e => {
   const isClickInsideAuthForm = authForm.contains(e.target);
 
-  if (!isClickInsideAuthForm && !authForm.classList.contains('hidden')) {
+  if (!isClickInsideAuthForm && !authForm.classList.contains('hidden'))
     authModalWrapper.classList.add('hidden');
-  }
 });
