@@ -19,7 +19,7 @@ class CarService {
         if (xhr.status == 200 && xhr.readyState === 4) {
           resolve(JSON.parse(xhr.response));
         } else {
-          var error = new NetworkError(xhr.status);
+          var error = new Error(xhr.status);
           error.code = xhr.status;
           reject(error);
         }
