@@ -127,7 +127,7 @@ carService
 const searchData = e => {
   e.preventDefault();
   carService
-    .getCars(1, e.target.elements.queryText.value)
+    .getCars(1, e.target.elements.queryText.value, sortBy, sortOrder)
     .then(data => renderList(data))
     .catch(error => snackbar(error));
 };
