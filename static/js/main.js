@@ -1,6 +1,5 @@
 // table elements
-const tableBodyElement = document.querySelector(".cars-list__body"),
-  tableElement = document.querySelector(".cars-list");
+const tableBodyElement = document.querySelector(".cars-list__body");
 
 //paginator elements
 const prevPageArrow = document.querySelector("#prev-page-arrow"),
@@ -14,7 +13,6 @@ const searchInput = document.querySelector("#search-input");
 
 //dynamic form elements
 const carFormTitle = document.querySelector("#car-form__title"),
-  submitFormButton = document.querySelector("#form-submit-btn"),
   formBtns = document.querySelector(".car-form__btns");
 
 //year field in table
@@ -199,8 +197,7 @@ const deleteCar = carId => {
     .deleteCar(carId)
     .then(res => {
       const carElement = document.querySelector(`[data-id='${carId}']`);
-      console.log(carId);
-      console.log(carElement);
+
       if (!carElement) return;
 
       snackbar(`Car №${carId} was deleted`);
