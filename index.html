@@ -8,71 +8,228 @@
     <title>JS Camp</title>
   </head>
   <body>
-    <form
-      action="https://backend-jscamp.saritasa-hosting.com/api/cars"
-      method="post"
-      class="add-car-form"
-    >
-      <h1>Add new car</h1>
+    <header>
+      <div class="container header__items-wrap">
+        <div class="header__logo"><h1>CarsJS</h1></div>
 
-      <div class="form-group">
-        <label for="bodyTypeName">Body type:</label>
-        <select name="body_type_id" id="bodyTypeName">
-          <option value="1">Convertible</option>
-          <option value="2">Coupe</option>
-          <option value="3">Sedan</option>
-        </select>
+        <div class="header__right-side">
+          <button class="header__create-car-btn" id="add-car-btn">
+            Add car
+          </button>
+          <form id="header__search-bar">
+            <input
+              type="search"
+              placeholder="Type search query..."
+              name="queryText"
+              id="search-input"
+            />
+            <button type="submit">Search</button>
+          </form>
+          <button id="sign-in-toggle-btn" class="outline-primary">
+            Sign in</button
+          ><button id="register-toggle-btn" class="primary">Register</button>
+        </div>
       </div>
+    </header>
 
-      <div class="form-group">
-        <label for="makeName">Make:</label>
-        <select name="make_id" id="makeName">
-          <option value="1">Kirlin-Stracke</option>
-          <option value="2">Muller, Goldner and Champlin</option>
-          <option value="3">Denesik Inc</option>
-        </select>
-      </div>
+    <main class="container">
+      <table class="cars-list">
+        <thead>
+          <tr>
+            <th>
+              <select id="producer-filter">
+                <option value="asc">sort order</option>
+                <option value="asc">ascending</option>
+                <option value="desc">descending</option>
+              </select>
+            </th>
+            <th>
+              <select id="model-filter">
+                <option value="asc">sort order</option>
+                <option value="asc">ascending</option>
+                <option value="desc">descending</option>
+              </select>
+            </th>
+            <th>
+              <select id="body-type-filter">
+                <option value="asc">sort order</option>
+                <option value="asc">ascending</option>
+                <option value="desc">descending</option>
+              </select>
+            </th>
+            <th>
+              <select id="year-filter">
+                <option value="asc">sort order</option>
+                <option value="asc">ascending</option>
+                <option value="desc">descending</option>
+              </select>
+            </th>
+            <th>
+              <select id="mileage-filter">
+                <option value="asc">sort order</option>
+                <option value="asc">ascending</option>
+                <option value="desc">descending</option>
+              </select>
+            </th>
+            <th>
+              <select id="description-filter">
+                <option value="asc">sort order</option>
+                <option value="asc">ascending</option>
+                <option value="desc">descending</option>
+              </select>
+            </th>
+            <th>
+              <select id="created-filter">
+                <option value="asc">sort order</option>
+                <option value="asc">ascending</option>
+                <option value="desc">descending</option>
+              </select>
+            </th>
+            <th>
+              <select id="updated-filter">
+                <option value="asc">sort order</option>
+                <option value="asc">ascending</option>
+                <option value="desc">descending</option>
+              </select>
+            </th>
+          </tr>
+          <tr>
+            <th>Producer</th>
+            <th>Model</th>
+            <th>Body type</th>
+            <th>Year</th>
+            <th>Mileage</th>
+            <th>Description</th>
+            <th>Created</th>
+            <th>Updated</th>
+          </tr>
+        </thead>
+        <tbody class="cars-list__body"></tbody>
 
-      <div class="form-group">
-        <label for="carModel">Model:</label>
-        <select name="car_model_id" id="carModel">
-          <option value="1">Ohara</option>
-          <option value="2">Osinski</option>
-          <option value="7">Lang</option>
-          <option value="12">Stracke</option>
-          <option value="55">Wisoky</option>
-        </select>
-      </div>
+        <div class="paginator">
+          <button id="prev-page-arrow">
+            <
+          </button>
+          <div class="paginator__pages">
+            <span class="pages__current"></span> /
+            <span class="pages__total"></span>
+          </div>
+          <button id="next-page-arrow">
+            >
+          </button>
+        </div>
+      </table>
+    </main>
 
-      <div class="form-group">
-        <label for="year">Year:</label>
-        <input name="year" type="number" min="1900" required />
-      </div>
+    <div class="modal-wrapper hidden" id="car-modal-wrapper">
+      <div class="modal">
+        <form class="car-form">
+          <h2 id="car-form__title">Add new car</h2>
 
-      <div class="form-group">
-        <label for="mileage">Mileage</label>
-        <input type="number" name="mileage" id="mileage" required />
-      </div>
+          <div class="form-group">
+            <label for="bodyTypeName">Body type:</label>
+            <div class="form-group__input-wrapper">
+              <select name="body_type_id" id="bodyTypeName" required>
+                <option value="1">Convertible</option>
+                <option value="2">Coupe</option>
+                <option value="3">Sedan</option>
+              </select>
+            </div>
+          </div>
 
-      <div class="form-group">
-        <label for="carDescription">Description:</label>
-      </div>
+          <div class="form-group">
+            <label for="makeName">Make:</label>
+            <div class="form-group__input-wrapper">
+              <select name="make_id" id="makeName" required>
+                <option value="1">Kirlin-Stracke</option>
+                <option value="2">Muller, Goldner and Champlin</option>
+                <option value="3">Denesik Inc</option>
+              </select>
+            </div>
+          </div>
 
-      <div class="form-group">
-        <textarea
-          name="description"
-          id="carDescription"
-          cols="40"
-          rows="10"
-          placeholder="Enter the car's description..."
-          name="description"
-          required
-        ></textarea>
-      </div>
+          <div class="form-group">
+            <label for="carModel">Model:</label>
+            <div class="form-group__input-wrapper">
+              <select name="car_model_id" id="carModel" required>
+                <option value="1">Ohara</option>
+                <option value="2">Osinski</option>
+                <option value="7">Lang</option>
+                <option value="12">Stracke</option>
+                <option value="55">Wisoky</option>
+              </select>
+            </div>
+          </div>
 
-      <div class="form-group">
-        <button type="submit">Add</button>
+          <div class="form-group">
+            <label for="year">Year:</label>
+            <div class="form-group__input-wrapper">
+              <input name="year" type="number" min="1900" required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="mileage">Mileage:</label>
+            <div class="form-group__input-wrapper">
+              <input type="number" name="mileage" id="mileage" required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="carDescription">Description:</label>
+          </div>
+
+          <div class="form-group">
+            <div class="form-group__input-wrapper">
+              <textarea
+                name="description"
+                id="carDescription"
+                cols="40"
+                rows="10"
+                placeholder="Enter the car's description..."
+                name="description"
+                required
+              ></textarea>
+            </div>
+          </div>
+
+          <div class="form-group car-form__btns form__btns"></div>
+        </form>
       </div>
-    </form>
+    </div>
+
+    <div class="modal-wrapper hidden" id="authentication-modal-wrapper">
+      <div class="modal">
+        <form class="authentication-form">
+          <h2 class="authentication-form__title">Sign in</h2>
+          <div class="form-group">
+            <label for="email">Email:</label>
+            <div class="form-group__input-wrapper">
+              <input type="email" id="email" name="email" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="username">Username:</label>
+            <div class="form-group__input-wrapper">
+              <input type="text" id="username" name="username" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="password">Password:</label>
+            <div class="form-group__input-wrapper">
+              <input type="password" id="password" name="password" />
+            </div>
+          </div>
+          <div class="form-group form__btns">
+            <button class="authentication-form__button primary" type="button">
+              Sign in
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="./static/js/libs/moment.js"></script>
+    <script type="module" src="./static/js/main.js"></script>
   </body>
 </html>
