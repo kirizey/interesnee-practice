@@ -1,3 +1,6 @@
+// eslint-disable-next-line eslint-comments/disable-enable-pair
+/* eslint-disable no-param-reassign */
+
 // eslint-disable-next-line import/extensions
 import { CarService } from './carsServiceXHR.js';
 
@@ -199,20 +202,40 @@ const updateCar = carId => {
     carService
       .updateCar(carId, data)
       .then(() => {
-        pushSnackbar(`Car №${carId} was updated`);
         carModalWrapper.classList.add('hidden');
 
         const updatedElement = document.querySelector(`[data-id='${carId}']`).children;
 
-        updatedElement[0].innerHTML = makeElement.options[makeElement.selectedIndex].text;
-        updatedElement[1].innerHTML = carModelElement.options[carModelElement.selectedIndex].text;
-        updatedElement[2].innerHTML = bodyTypeElement.options[bodyTypeElement.selectedIndex].text;
-        updatedElement[4].innerHTML = mileageElement.value;
-        updatedElement[5].innerHTML = descriptionElement.value;
+        [...updatedElement].map(rowElement => {
+          switch (rowElement.getAttribute('data-name')) {
+            case 'make':
+              rowElement.innerHTML = makeElement.options[makeElement.selectedIndex].text;
+              break;
+
+            case 'model':
+              rowElement.innerHTML = carModelElement.options[carModelElement.selectedIndex].text;
+              break;
+
+            case 'bodyType':
+              rowElement.innerHTML = bodyTypeElement.options[bodyTypeElement.selectedIndex].text;
+              break;
+
+            case 'mileage':
+              rowElement.innerHTML = mileageElement.value;
+              break;
+
+            case 'description':
+              rowElement.innerHTML = descriptionElement.value;
+              break;
+
+            default:
+              break;
+          }
+
+          return pushSnackbar(`Car №${carId} was updated`);
+        });
       })
-      .catch(error => {
-        pushSnackbar(error);
-      });
+      .catch(error => pushSnackbar(error));
   }
 };
 
@@ -308,18 +331,21 @@ const appendCarInstanceInTable = car => {
 
   make.innerHTML = car.make.name;
   make.addEventListener('click', () => renderUpdateForm(car));
+  make.setAttribute('data-name', 'make');
   tr.appendChild(make);
 
   const model = document.createElement('th');
 
   model.innerText = car.car_model.name;
   model.addEventListener('click', () => renderUpdateForm(car));
+  model.setAttribute('data-name', 'model');
   tr.appendChild(model);
 
   const bodyType = document.createElement('th');
 
   bodyType.innerText = car.body_type.name;
   bodyType.addEventListener('click', () => renderUpdateForm(car));
+  bodyType.setAttribute('data-name', 'bodyType');
   tr.appendChild(bodyType);
 
   const year = document.createElement('th');
@@ -330,11 +356,13 @@ const appendCarInstanceInTable = car => {
   const mileage = document.createElement('th');
 
   mileage.innerText = car.mileage;
+  mileage.setAttribute('data-name', 'mileage');
   tr.appendChild(mileage);
 
   const description = document.createElement('th');
 
   description.innerText = car.description;
+  description.setAttribute('data-name', 'description');
   tr.appendChild(description);
 
   const createdAt = document.createElement('th');
@@ -400,7 +428,7 @@ carService
 const searchData = e => {
   e.preventDefault();
   carService
-    .getCars(1, e.target.elements.queryText.value, sortBy, sortOrder)
+    .getCars(sortBy, sortOrder, 1, e.target.elements.queryText.value)
     .then(data => renderTable(data))
     .catch(error => pushSnackbar(error));
 };
@@ -408,9 +436,9 @@ const searchData = e => {
 /**
  * Get next page when click next page arrow.
  */
-const getNextPage = () => {
+const goToNextPage = () => {
   carService
-    .getCars(parseInt(currentPageElement.innerText, 10) + 1, searchQuery, sortBy, sortOrder)
+    .getCars(sortBy, sortOrder, parseInt(currentPageElement.innerText, 10) + 1, searchQuery)
     .then(data => renderTable(data))
     .catch(error => pushSnackbar(error));
 };
@@ -418,9 +446,9 @@ const getNextPage = () => {
 /**
  * Get previous page when click next page arrow.
  */
-const getPreviousPage = () => {
+const goToPreviousPage = () => {
   carService
-    .getCars(parseInt(currentPageElement.innerText, 10) - 1, searchQuery, sortBy, sortOrder)
+    .getCars(sortBy, sortOrder, parseInt(currentPageElement.innerText, 10) - 1, searchQuery)
     .then(data => renderTable(data))
     .catch(error => pushSnackbar(error));
 };
@@ -434,9 +462,10 @@ const getPreviousPage = () => {
 const sortList = (field, e) => {
   sortBy = field;
   sortOrder = e.target.value;
+  searchQuery = '';
 
   carService
-    .getCars(1, '', sortBy, sortOrder)
+    .getCars(sortBy, sortOrder, 1, '')
     .then(data => renderTable(data))
     .catch(error => pushSnackbar(error));
 };
@@ -533,8 +562,8 @@ searchInput.addEventListener('keydown', setSearchQueryValue);
 searchBar.addEventListener('submit', searchData);
 
 // pagination request events
-nextPageArrow.addEventListener('click', getNextPage);
-prevPageArrow.addEventListener('click', getPreviousPage);
+nextPageArrow.addEventListener('click', goToNextPage);
+prevPageArrow.addEventListener('click', goToPreviousPage);
 
 // listners for sort query
 producerSortFilter.addEventListener('change', e => sortList('make.name', e));

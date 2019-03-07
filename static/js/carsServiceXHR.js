@@ -1,5 +1,7 @@
+// eslint-disable-next-line eslint-comments/disable-enable-pair
+/* eslint-disable no-unused-expressions */
 /**
- * Create an error mathod.
+ * Create an error method.
  *
  * @param {number} status Error status.
  * @returns {Error} Return error.
@@ -11,6 +13,33 @@ const pushError = status => {
 
   return error;
 };
+
+/**
+ * Common handler for XHR methods.
+ *
+ * @param {string} method Request type.
+ * @param {string} endpoint Url where request is sending.
+ * @param {Object} headers Headers for request.
+ * @param {number} expectedStatus What status we waiting in result.
+ * @param {Object} data Sending data if it necessary.
+ * @returns {Promise} Return promise.
+ */
+const sendXHR = (method, endpoint, headers, expectedStatus, data) =>
+  new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+
+    xhr.open(method, endpoint, false);
+
+    if (headers) xhr.setRequestHeader(headers.type, headers.value);
+
+    xhr.onload = () => {
+      xhr.status === expectedStatus && xhr.readyState === 4
+        ? resolve(xhr.status)
+        : reject(pushError(xhr.status));
+    };
+
+    method === 'DELETE' ? xhr.send() : xhr.send(JSON.stringify(data));
+  });
 
 /**
  * Method set to api using XMLHttpRequest
@@ -26,36 +55,41 @@ export class CarService {
   /**
    * Common get cars data method call too api.
    *
-   * @param {number} page Page number need to get.
-   * @param {string} searchQuery Keyword need to search and get data.
    * @param {string} orderBy Name of field need to get.
    * @param {string} sortOrder Sort order.
+   * @param {number} page Page number need to get.
+   * @param {string} searchQuery Keyword need to search and get data.
    * @returns {Promise} Resolve - cars data, Reject - error and retry request.
    */
-  getCars(page = 1, searchQuery = '', orderBy, sortOrder = 'asc') {
-    return (
-      new Promise((resolve, reject) => {
-        const xhr = new XMLHttpRequest();
+  getCars(orderBy, sortOrder = 'asc', page = 1, searchQuery = '') {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
 
-        const orderParam = orderBy ? `&order_by=${orderBy}&sort_order=${sortOrder}` : '';
+      const searchParams = new URLSearchParams();
 
-        xhr.open('GET', `${this.apiUrl}?page=${page}&keyword=${searchQuery}${orderParam}`, false);
+      searchParams.append('page', page);
+      searchParams.append('keyword', searchQuery);
+      if (orderBy) {
+        searchParams.append('order_by', orderBy);
+        searchParams.append('sort_order', sortOrder);
+      }
 
-        xhr.onload = () => {
-          // eslint-disable-next-line no-unused-expressions
-          xhr.status === 200 && xhr.readyState === 4
-            ? resolve(JSON.parse(xhr.response))
-            : reject(pushError(xhr.status));
-        };
+      xhr.open('GET', `${this.apiUrl}?${searchParams}`, false);
 
-        xhr.send();
-      })
-        .then(response => response)
-        // eslint-disable-next-line consistent-return
-        .catch(error => {
-          if (error.code === 503) return this.getCars(page, searchQuery, orderBy, sortOrder);
-        })
-    );
+      xhr.onload = () => {
+        xhr.status === 200 && xhr.readyState === 4
+          ? resolve(JSON.parse(xhr.response))
+          : reject(pushError(xhr.status));
+      };
+
+      xhr.send();
+    })
+      .then(response => response)
+      .catch(error => {
+        if (error.code === 503) return this.getCars(orderBy, sortOrder, page, searchQuery);
+
+        return pushError(400);
+      });
   }
 
   /**
@@ -66,28 +100,19 @@ export class CarService {
    * @returns {Promise} Resolve - status: "200" - OK, Reject - error and retry request.
    */
   createCar(data) {
-    return (
-      new Promise((resolve, reject) => {
-        const xhr = new XMLHttpRequest();
+    return sendXHR(
+      'POST',
+      this.apiUrl,
+      { type: 'content-type', value: 'application/json' },
+      200,
+      data,
+    )
+      .then(response => response)
+      .catch(error => {
+        if (error.code === 503) return this.createCar(data);
 
-        xhr.open('POST', this.apiUrl, false);
-        xhr.setRequestHeader('content-type', 'application/json');
-
-        xhr.onload = () => {
-          // eslint-disable-next-line no-unused-expressions
-          xhr.status === 200 && xhr.readyState === 4
-            ? resolve(xhr.status)
-            : reject(pushError(xhr.status));
-        };
-
-        xhr.send(JSON.stringify(data));
-      })
-        .then(response => response)
-        // eslint-disable-next-line consistent-return
-        .catch(error => {
-          if (error.code === 503) return this.createCar(data);
-        })
-    );
+        return pushError(400);
+      });
   }
 
   /**
@@ -98,27 +123,19 @@ export class CarService {
    * @returns {Promise} Resolve - status: "200" - OK, Reject - error and retry request.
    */
   updateCar(carId, data) {
-    return (
-      new Promise((resolve, reject) => {
-        const xhr = new XMLHttpRequest();
+    return sendXHR(
+      'PUT',
+      `${this.apiUrl}/${carId}`,
+      { type: 'content-type', value: 'application/json' },
+      200,
+      data,
+    )
+      .then(response => response)
+      .catch(error => {
+        if (error.code === 503) return this.updateCar(carId, data);
 
-        xhr.open('PUT', `${this.apiUrl}/${carId}`, false);
-        xhr.setRequestHeader('content-type', 'application/json');
-
-        xhr.onload = () => {
-          // eslint-disable-next-line no-unused-expressions
-          xhr.status === 200 && xhr.readyState === 4
-            ? resolve(xhr.status)
-            : reject(pushError(xhr.status));
-        };
-        xhr.send(JSON.stringify(data));
-      })
-        .then(response => response)
-        // eslint-disable-next-line consistent-return
-        .catch(error => {
-          if (error.code === 503) return this.updateCar(carId, data);
-        })
-    );
+        return pushError(400);
+      });
   }
 
   /**
@@ -128,28 +145,12 @@ export class CarService {
    * @returns {Promise} Resolve - status: "204" - deleted, Reject - error and retry request.
    */
   deleteCar(carId) {
-    return (
-      new Promise((resolve, reject) => {
-        const xhr = new XMLHttpRequest();
+    return sendXHR('DELETE', `${this.apiUrl}/${carId}`, '', 204)
+      .then(response => response)
+      .catch(error => {
+        if (error.code === 503) return this.deleteCar(carId);
 
-        xhr.open('DELETE', `${this.apiUrl}/${carId}`);
-
-        xhr.onload = () => {
-          // eslint-disable-next-line no-unused-expressions
-          (xhr.status === 204 || xhr.status === 200) && xhr.readyState === 4
-            ? resolve(xhr.status)
-            : reject(pushError(xhr.status));
-        };
-
-        xhr.send();
-      })
-        .then(response => response)
-        // eslint-disable-next-line consistent-return
-        .catch(error => {
-          if (error.code === 503) return this.deleteCar(carId);
-
-          if (error.code === 404) throw new Error('Element was deleted...');
-        })
-    );
+        return pushError(400);
+      });
   }
 }
