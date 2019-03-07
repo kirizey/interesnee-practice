@@ -1,6 +1,3 @@
-// eslint-disable-next-line eslint-comments/disable-enable-pair
-/* eslint-disable no-param-reassign */
-
 // eslint-disable-next-line import/extensions
 import { CarService } from './carServiceFetch.js';
 
