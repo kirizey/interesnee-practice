@@ -1,8 +1,5 @@
-// eslint-disable-next-line eslint-comments/disable-enable-pair
-/* eslint-disable no-param-reassign */
-
 // eslint-disable-next-line import/extensions
-import { CarService } from './carsServiceXHR.js';
+import { CarService } from './carServiceFetch.js';
 
 // table elements
 const tableBodyElement = document.querySelector('.cars-list__body');
