@@ -152,13 +152,52 @@ export class CarService {
    * @param {Object} authData Input email and password data.
    * @returns {Promise} Resolve - user token, reject - error.
    */
-  getUserToken(authData) {
+  login(authData) {
     return sendFetch('', 'POST', this.authUrl, authData)
-      .then(response => response)
+      .then(response => {
+        const expirationDate = Date.now() + 3600 * 1000;
+
+        localStorage.setItem('userToken', response.token);
+        localStorage.setItem('expirationDate', expirationDate);
+      })
       .catch(error => {
-        if (error === 503) return this.getUserToken(authData);
+        if (error === 503) return this.login(authData);
 
         return pushError(400);
       });
+  }
+
+  /**
+   * Logout method reset local storage.
+   *
+   */
+  logout() {
+    localStorage.removeItem('userToken');
+    localStorage.removeItem('expirationDate');
+  }
+
+  /**
+   * Check auth state.
+   *
+   * @returns {boolean} State of authentication.
+   */
+  checkAuthState() {
+    const token = localStorage.getItem('userToken');
+
+    if (token === undefined) {
+      this.logout();
+
+      return false;
+    }
+
+    const expirationDate = localStorage.getItem('expirationDate');
+
+    if (expirationDate < new Date()) {
+      this.logout();
+
+      return false;
+    }
+
+    return true;
   }
 }

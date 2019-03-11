@@ -63,6 +63,8 @@ const createCarBtn = document.createElement('button');
 let deleteCarBtn = document.createElement('button');
 let updateCarBtn = document.createElement('button');
 
+const logoutBtn = document.querySelector('#logout-btn');
+
 /**
  * Method to push snackbar with sended message.
  *
@@ -114,6 +116,24 @@ const checkForOpenModal = element => {
 const toggleAuthModal = () => {
   authModalWrapper.classList.toggle('hidden');
   checkForOpenModal(authModalWrapper);
+};
+
+/**
+ * Hide auth btns and show logout btn.
+ */
+const hideAuthBtns = () => {
+  toggleSignInModalBtn.classList.add('hidden');
+  togglRegisterModalBtn.classList.add('hidden');
+  logoutBtn.classList.remove('hidden');
+};
+
+/**
+ * Show auth btns and hide logout btn.
+ */
+const showAuthBtns = () => {
+  toggleSignInModalBtn.classList.remove('hidden');
+  togglRegisterModalBtn.classList.remove('hidden');
+  logoutBtn.classList.add('hidden');
 };
 
 /**
@@ -563,7 +583,7 @@ const setSearchQueryValue = e => {
  *
  * @param {Event} e Submition event.
  */
-const getUserToken = e => {
+const login = e => {
   e.preventDefault();
 
   const formData = {
@@ -572,10 +592,8 @@ const getUserToken = e => {
   };
 
   carService
-    .getUserToken(formData)
-    .then(data => {
-      localStorage.setItem('userToken', data.token);
-
+    .login(formData)
+    .then(() => {
       if (localStorage.userToken) {
         // initial showing data
         carService
@@ -584,9 +602,7 @@ const getUserToken = e => {
           .then(() => {
             toggleAuthModal();
             pushSnackbar('Welcome senpai!');
-
-            toggleSignInModalBtn.remove();
-            togglRegisterModalBtn.remove();
+            hideAuthBtns();
           })
           .catch(error => pushSnackbar(error));
       }
@@ -594,14 +610,30 @@ const getUserToken = e => {
     .catch(() => pushSnackbar('Authorization failed'));
 };
 
+/**
+ * Make logout and remove table items.
+ */
+const logout = () => {
+  carService.logout();
+  showAuthBtns();
+
+  while (tableBodyElement.firstChild) {
+    tableBodyElement.removeChild(tableBodyElement.firstChild);
+  }
+};
+
 (function() {
-  if (localStorage.userToken) {
-    // toggleSignInModalBtn.remove();
-    // togglRegisterModalBtn.remove();
+  const authState = carService.checkAuthState();
+
+  if (authState) {
+    hideAuthBtns();
+
     carService
       .getCars(localStorage.userToken)
       .then(carsData => renderTable(carsData))
       .catch(error => pushSnackbar(error));
+  } else {
+    showAuthBtns();
   }
 })();
 
@@ -649,4 +681,6 @@ authModalWrapper.addEventListener('click', e => {
     authModalWrapper.classList.add('hidden');
 });
 
-authForm.addEventListener('submit', getUserToken);
+authForm.addEventListener('submit', login);
+
+logoutBtn.addEventListener('click', logout);
