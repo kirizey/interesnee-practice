@@ -1,19 +1,13 @@
 <template>
   <div>
-    <Dashboard/>
+    <router-view/>
   </div>
 </template>
 
 <script>
-import Dashboard from "./pages/Dashboard.vue";
-import Authentication from "./pages/Authentication.vue";
-
 export default {
   name: "app",
-  components: {
-    Dashboard,
-    Authentication
-  }
+  components: {}
 };
 </script>
 
