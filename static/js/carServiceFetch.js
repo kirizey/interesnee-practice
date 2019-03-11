@@ -155,10 +155,10 @@ export class CarService {
   login(authData) {
     return sendFetch('', 'POST', this.authUrl, authData)
       .then(response => {
-        const expirationDate = Date.now() + 3600 * 1000;
+        const expirationTime = Date.now() + 3600 * 1000;
 
         localStorage.setItem('userToken', response.token);
-        localStorage.setItem('expirationDate', expirationDate);
+        localStorage.setItem('expirationTime', expirationTime);
       })
       .catch(error => {
         if (error === 503) return this.login(authData);
@@ -173,7 +173,7 @@ export class CarService {
    */
   logout() {
     localStorage.removeItem('userToken');
-    localStorage.removeItem('expirationDate');
+    localStorage.removeItem('expirationTime');
   }
 
   /**
@@ -190,9 +190,9 @@ export class CarService {
       return false;
     }
 
-    const expirationDate = localStorage.getItem('expirationDate');
+    const expirationTime = localStorage.getItem('expirationTime');
 
-    if (expirationDate < new Date()) {
+    if (expirationTime < new Date()) {
       this.logout();
 
       return false;
