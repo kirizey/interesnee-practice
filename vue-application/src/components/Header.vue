@@ -5,7 +5,10 @@
 
       <div class="header__right-side">
         <button class="header__create-car-btn" type="button">Add car</button>
-        <input type="search" placeholder="Type search query...">
+        <form @submit="search">
+          <input type="search" placeholder="Type search query..." v-model="searchQuery">
+        </form>
+
         <button class="primary" type="button">Logout</button>
       </div>
     </div>
@@ -15,7 +18,18 @@
 
 <script>
 export default {
-  name: "Header"
+  name: "Header",
+  data() {
+    return {
+      searchQuery: ""
+    };
+  },
+  methods: {
+    search(e) {
+      e.preventDefault();
+      this.$store.dispatch("search", this.searchQuery);
+    }
+  }
 };
 </script>
 

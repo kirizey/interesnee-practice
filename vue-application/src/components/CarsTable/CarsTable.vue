@@ -36,5 +36,6 @@ export default {
   vertical-align: middle;
   border: 1px solid #dee2e6;
   font-weight: normal;
+  font-size: 15px;
 }
 </style>
