@@ -15,7 +15,6 @@ import CarsTableBody from "./CarsTableBody.vue";
 import CarsTablePaginator from "./CarsTablePaginator";
 
 export default {
-  name: "CarsTable",
   components: {
     CarsTableHead,
     CarsTableBody,

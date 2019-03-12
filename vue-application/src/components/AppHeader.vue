@@ -4,7 +4,7 @@
       <h2>CarsJS</h2>
 
       <div class="header__right-side">
-        <button class="header__create-car-btn" type="button">Add car</button>
+        <button class="header__create-car-btn" type="button" @click="openCreateCarModal">Add car</button>
         <form @submit.prevent="search">
           <input type="search" placeholder="Type search query..." v-model="searchQuery">
         </form>
@@ -20,7 +20,6 @@
 import { mapGetters } from "vuex";
 
 export default {
-  name: "Header",
   data() {
     return {
       searchQuery: ""
@@ -37,6 +36,9 @@ export default {
         orderBy: this.QUERY_DATA.orderBy,
         sortOrder: this.QUERY_DATA.sortOrder
       });
+    },
+    openCreateCarModal() {
+      this.$store.dispatch("CHANGE_CARS_MODAL_OPTIONS", { opened: true });
     }
   }
 };

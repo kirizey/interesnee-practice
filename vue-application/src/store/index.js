@@ -11,18 +11,21 @@ const store = new Vuex.Store({
   state: {
     cars: null,
     paginationData: {},
-    queryData: { page: 1, keyword: '', orderBy: null, sortOrder: null }
+    queryData: { page: 1, keyword: '', orderBy: null, sortOrder: null },
+    carsModalOptions: { opened: true, data: null }
   },
   getters: {
     CARS: state => state.cars,
     PAGINATION_DATA: state => state.paginationData,
-    QUERY_DATA: state => state.queryData
+    QUERY_DATA: state => state.queryData,
+    CARS_MODAL_OPTIONS: state => state.carsModalOptions
   },
   mutations: {
     SET_CARS: (state, payload) => (state.cars = payload),
     ADD_CAR: (state, payload) => [...state.cars, payload],
     SET_PAGINATION_DATA: (state, payload) => (state.paginationData = payload),
-    SET_QUERY_DATA: (state, payload) => (state.queryData = payload)
+    SET_QUERY_DATA: (state, payload) => (state.queryData = payload),
+    SET_CARS_MODAL_OPTIONS: (state, payload) => (state.carsModalOptions = payload)
   },
   actions: {
     GET_CARS: async (context, payload) => {
@@ -51,13 +54,19 @@ const store = new Vuex.Store({
       }
     },
 
-    SAVE_CAR: async (context, payload) => {
-      let { data } = await axios.post(API_URL);
-      context.commit('ADD_CAR', payload);
+    CREATE_CAR: async (context, payload) => {
+      let { data, status } = await axios.post(API_URL, payload);
+      if (status === 200) {
+        context.commit('ADD_CAR', data);
+      }
     },
 
     CHANGE_QUERY_DATA: (context, payload) => {
       context.commit('SET_QUERY_DATA', payload);
+    },
+
+    CHANGE_CARS_MODAL_OPTIONS: (context, payload) => {
+      context.commit('SET_CARS_MODAL_OPTIONS', payload);
     }
   }
 });

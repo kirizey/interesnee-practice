@@ -30,10 +30,10 @@ body {
   margin-bottom: 30px;
 }
 
-.title h2 {
+h2.title {
   text-align: center;
 }
-.title h2::after {
+h2.title::after {
   content: "";
   position: absolute;
   right: 0;

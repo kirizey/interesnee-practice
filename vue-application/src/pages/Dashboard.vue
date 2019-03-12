@@ -1,19 +1,27 @@
 <template>
   <div>
-    <Header/>
-    <CarsTable/>
+    <app-header/>
+    <cars-table/>
+    <car-modal v-if="CARS_MODAL_OPTIONS.opened"/>
   </div>
 </template>
 
 <script>
 import CarsTable from "../components/CarsTable/CarsTable.vue";
-import Header from "../components/Header.vue";
+import AppHeader from "../components/AppHeader.vue";
+import CarModal from "../components/CarModal.vue";
+
+import { mapGetters } from "vuex";
 
 export default {
   name: "Dashboard",
   components: {
-    Header,
-    CarsTable
+    AppHeader,
+    CarsTable,
+    CarModal
+  },
+  computed: {
+    ...mapGetters(["CARS_MODAL_OPTIONS"])
   }
 };
 </script>
