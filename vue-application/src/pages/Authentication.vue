@@ -1,32 +1,60 @@
 <template>
   <div class="authentication__wrap">
     <form class="authentication-form">
-      <div class="title">
-        <h2>Authorization</h2>
-      </div>
+      <h2 class="title">Authorization</h2>
       <div class="form-group">
         <label for="email">Email:</label>
         <div class="form-group__input-wrapper">
-          <input type="email" id="email" name="email">
+          <input type="email" id="email" v-model="email">
         </div>
       </div>
 
       <div class="form-group">
         <label for="password">Password:</label>
         <div class="form-group__input-wrapper">
-          <input type="password" id="password" name="password">
+          <input type="password" id="password" v-model="password">
         </div>
       </div>
       <div class="form-group form-btns">
-        <button class="primary" type="button">Sign in</button>
+        <button class="primary" type="button" @click="login">Sign in</button>
       </div>
     </form>
   </div>
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+
 export default {
-  name: "Authentication"
+  name: "Authentication",
+
+  data() {
+    return {
+      email: "",
+      password: ""
+    };
+  },
+
+  computed: {
+    ...mapGetters(["USER_TOKEN"])
+  },
+
+  methods: {
+    login() {
+      this.$store.dispatch("LOGIN", {
+        email: this.email,
+        password: this.password
+      });
+
+      setTimeout(() => {
+        if (this.USER_TOKEN.value) {
+          this.$router.push(this.$route.query.redirect || "/");
+        } else {
+          this.$router.push("/auth");
+        }
+      }, 1000);
+    }
+  }
 };
 </script>
 

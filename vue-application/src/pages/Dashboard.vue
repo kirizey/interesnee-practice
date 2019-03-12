@@ -3,6 +3,7 @@
     <app-header/>
     <cars-table/>
     <car-modal v-if="CARS_MODAL_OPTIONS.opened"/>
+    <notification-snackbar v-if="SNACKBAR_OPTIONS.visible"/>
   </div>
 </template>
 
@@ -10,6 +11,7 @@
 import CarsTable from "../components/CarsTable/CarsTable.vue";
 import AppHeader from "../components/AppHeader.vue";
 import CarModal from "../components/CarModal.vue";
+import NotificationSnackbar from "../components/NotificationSnackbar.vue";
 
 import { mapGetters } from "vuex";
 
@@ -18,10 +20,11 @@ export default {
   components: {
     AppHeader,
     CarsTable,
-    CarModal
+    CarModal,
+    NotificationSnackbar
   },
   computed: {
-    ...mapGetters(["CARS_MODAL_OPTIONS"])
+    ...mapGetters(["CARS_MODAL_OPTIONS", "SNACKBAR_OPTIONS"])
   }
 };
 </script>

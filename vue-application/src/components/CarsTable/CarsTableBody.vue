@@ -1,9 +1,9 @@
 <template>
   <tbody class="cars-list__body">
     <tr :key="car.id" v-for="car in CARS">
-      <th>{{car.make.name}}</th>
-      <th>{{car.car_model.name}}</th>
-      <th>{{car.body_type.name}}</th>
+      <th @click="() => openUpdateCarModal(car)">{{car.make.name}}</th>
+      <th @click="() => openUpdateCarModal(car)">{{car.car_model.name}}</th>
+      <th @click="() => openUpdateCarModal(car)">{{car.body_type.name}}</th>
       <th>{{car.year}}</th>
       <th>{{car.mileage}}</th>
       <th>{{car.description}}</th>
@@ -18,7 +18,15 @@ import { mapGetters } from "vuex";
 
 export default {
   computed: {
-    ...mapGetters(["CARS"])
+    ...mapGetters(["CARS", "CARS_MODAL_OPTIONS"])
+  },
+  methods: {
+    openUpdateCarModal(car) {
+      this.$store.dispatch("CHANGE_CARS_MODAL_OPTIONS", {
+        opened: true,
+        data: car
+      });
+    }
   }
 };
 </script>

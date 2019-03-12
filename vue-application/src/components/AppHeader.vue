@@ -9,7 +9,9 @@
           <input type="search" placeholder="Type search query..." v-model="searchQuery">
         </form>
 
-        <button class="primary" type="button">Logout</button>
+        <router-link to="/auth">
+          <button class="primary" type="button" @click="logout">Logout</button>
+        </router-link>
       </div>
     </div>
   </header>
@@ -39,6 +41,11 @@ export default {
     },
     openCreateCarModal() {
       this.$store.dispatch("CHANGE_CARS_MODAL_OPTIONS", { opened: true });
+    },
+    logout() {
+      this.$router.push(this.$route.query.redirect || "/auth");
+
+      this.$store.dispatch("LOGOUT", null);
     }
   }
 };

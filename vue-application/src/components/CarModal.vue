@@ -73,7 +73,26 @@
             </div>
 
             <div class="form-group car-form__btns form__btns">
-              <button class="primary" type="button" @click="createCar">Create</button>
+              <button
+                v-if="!CARS_MODAL_OPTIONS.data"
+                class="primary"
+                type="button"
+                @click="createCar"
+              >Create</button>
+              
+              <button
+                v-if="CARS_MODAL_OPTIONS.data"
+                class="edit"
+                type="button"
+                @click="updateCar"
+              >Update</button>
+              
+              <button
+                v-if="CARS_MODAL_OPTIONS.data"
+                class="delete"
+                type="button"
+                @click="deleteCar"
+              >Delete</button>
               
               <button class="modal-default-button" type="button" @click="closeModal">Close</button>
             </div>
@@ -85,7 +104,10 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+
 export default {
+  computed: { ...mapGetters(["CARS_MODAL_OPTIONS"]) },
   data() {
     return {
       body_type_id: null,
@@ -112,6 +134,36 @@ export default {
         mileage: this.mileage,
         description: this.description
       });
+
+      this.closeModal();
+    },
+
+    deleteCar() {
+      this.$store.dispatch("DELETE_CAR", this.CARS_MODAL_OPTIONS.data.id);
+      this.closeModal();
+    },
+
+    updateCar() {
+      this.$store.dispatch("UPDATE_CAR", {
+        id: this.CARS_MODAL_OPTIONS.data.id,
+        body_type_id: this.body_type_id,
+        make_id: this.make_id,
+        car_model_id: this.car_model_id,
+        year: this.year,
+        mileage: this.mileage,
+        description: this.description
+      });
+      this.closeModal();
+    }
+  },
+  mounted() {
+    if (this.CARS_MODAL_OPTIONS.data) {
+      (this.body_type_id = this.CARS_MODAL_OPTIONS.data.body_type_id),
+        (this.make_id = this.CARS_MODAL_OPTIONS.data.make_id),
+        (this.car_model_id = this.CARS_MODAL_OPTIONS.data.car_model_id),
+        (this.year = this.CARS_MODAL_OPTIONS.data.year),
+        (this.mileage = this.CARS_MODAL_OPTIONS.data.mileage),
+        (this.description = this.CARS_MODAL_OPTIONS.data.description);
     }
   }
 };
@@ -176,5 +228,25 @@ export default {
 textarea {
   width: 100%;
   margin-top: 10px;
+}
+
+button.delete {
+  background-color: #c82333;
+  border-color: #bd2130;
+  color: #fff;
+}
+
+button.delete:hover {
+  background-color: #b82030;
+}
+
+button.edit {
+  color: #212529;
+  background-color: #ffc107;
+  border-color: #ffc107;
+}
+
+button.edit:hover {
+  background-color: #f7b900;
 }
 </style>

@@ -68,7 +68,7 @@ export default {
 <style scoped>
 .table-titles th {
   font-weight: bold;
-  min-width: 120px;
+  min-width: 130px;
   height: 40px;
 }
 
