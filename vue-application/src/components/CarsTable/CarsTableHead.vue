@@ -1,82 +1,92 @@
 <template>
   <thead>
-    <tr>
-      <th>
-        <select id="producer-filter">
-          <option value="asc">sort order</option>
-          <option value="asc">ascending</option>
-          <option value="desc">descending</option>
-        </select>
-      </th>
-      <th>
-        <select id="model-filter">
-          <option value="asc">sort order</option>
-          <option value="asc">ascending</option>
-          <option value="desc">descending</option>
-        </select>
-      </th>
-      <th>
-        <select id="body-type-filter">
-          <option value="asc">sort order</option>
-          <option value="asc">ascending</option>
-          <option value="desc">descending</option>
-        </select>
-      </th>
-      <th>
-        <select id="year-filter">
-          <option value="asc">sort order</option>
-          <option value="asc">ascending</option>
-          <option value="desc">descending</option>
-        </select>
-      </th>
-      <th>
-        <select id="mileage-filter">
-          <option value="asc">sort order</option>
-          <option value="asc">ascending</option>
-          <option value="desc">descending</option>
-        </select>
-      </th>
-      <th>
-        <select id="description-filter">
-          <option value="asc">sort order</option>
-          <option value="asc">ascending</option>
-          <option value="desc">descending</option>
-        </select>
-      </th>
-      <th>
-        <select id="created-filter">
-          <option value="asc">sort order</option>
-          <option value="asc">ascending</option>
-          <option value="desc">descending</option>
-        </select>
-      </th>
-      <th>
-        <select id="updated-filter">
-          <option value="asc">sort order</option>
-          <option value="asc">ascending</option>
-          <option value="desc">descending</option>
-        </select>
-      </th>
-    </tr>
     <tr class="table-titles">
-      <th>Producer</th>
-      <th>Model</th>
-      <th>Body type</th>
-      <th>Year</th>
-      <th>Mileage</th>
-      <th>Description</th>
-      <th>Created</th>
-      <th>Updated</th>
+      <th :key="type.name" v-for="type in sortTypes">
+        <div class="title-container">
+          {{type.name}}
+          <div class="sort-arrows">
+            <i
+              @click="()=> selectSort(type.sName, 'asc')"
+              :class="{active:type.sName===selectedFilter.sName &&selectedFilter.order==='asc'}"
+              class="fas fa-arrow-alt-circle-up"
+            ></i>
+            <i
+              @click="()=> selectSort(type.sName, 'desc')"
+              :class="{active:type.sName===selectedFilter.sName &&selectedFilter.order==='desc'}"
+              class="fas fa-arrow-alt-circle-down"
+            ></i>
+          </div>
+        </div>
+      </th>
     </tr>
   </thead>
 </template>
 
 <script>
-export default {};
+import { mapGetters } from "vuex";
+
+export default {
+  data() {
+    return {
+      sortTypes: [
+        { name: "Producer", sName: "make.name" },
+        { name: "Model", sName: "car_model.name" },
+        { name: "Body type", sName: "body_type.name" },
+        { name: "Year", sName: "year" },
+        { name: "Mileage", sName: "mileage" },
+        { name: "Description", sName: "description" },
+        { name: "Created", sName: "created_at" },
+        { name: "Updated", sName: "updated_at" }
+      ],
+      selectedFilter: {
+        sName: "",
+        order: ""
+      }
+    };
+  },
+  methods: {
+    selectSort(sName, sortOrder) {
+      this.selectedFilter = {
+        sName: sName,
+        order: sortOrder
+      };
+
+      this.$store.dispatch("GET_CARS", {
+        page: 1,
+        keyword: this.QUERY_DATA.keyword,
+        orderBy: sName,
+        sortOrder: sortOrder
+      });
+    }
+  },
+  computed: {
+    ...mapGetters(["QUERY_DATA"])
+  }
+};
 </script>
 
 <style scoped>
 .table-titles th {
   font-weight: bold;
+  min-width: 120px;
+  height: 40px;
+}
+
+.title-container {
+  display: flex;
+  justify-content: center;
+}
+
+.sort-arrows {
+  margin-left: 5px;
+}
+
+i {
+  margin: 0 2px;
+  cursor: pointer;
+}
+
+.active {
+  color: #2daee0;
 }
 </style>

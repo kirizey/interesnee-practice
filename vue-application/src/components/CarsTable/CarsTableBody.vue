@@ -1,6 +1,6 @@
 <template>
   <tbody class="cars-list__body">
-    <tr v-bind:key="car.id" v-for="car in CARS">
+    <tr :key="car.id" v-for="car in CARS">
       <th>{{car.make.name}}</th>
       <th>{{car.car_model.name}}</th>
       <th>{{car.body_type.name}}</th>

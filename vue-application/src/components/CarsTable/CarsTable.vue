@@ -22,7 +22,7 @@ export default {
     CarsTablePaginator
   },
   mounted() {
-    this.$store.dispatch("GET_CARS", {});
+    this.$store.dispatch("GET_CARS", { page: 1 });
   }
 };
 </script>

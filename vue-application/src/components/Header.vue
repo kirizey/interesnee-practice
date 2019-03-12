@@ -5,7 +5,7 @@
 
       <div class="header__right-side">
         <button class="header__create-car-btn" type="button">Add car</button>
-        <form @submit.prevent="() => search(QUERY_DATA)">
+        <form @submit.prevent="search">
           <input type="search" placeholder="Type search query..." v-model="searchQuery">
         </form>
 
@@ -30,18 +30,12 @@ export default {
     ...mapGetters(["QUERY_DATA"])
   },
   methods: {
-    search(queryData) {
-      this.$store.dispatch("CHANGE_QUERY_DATA", {
-        page: 1,
-        keyword: this.searchQuery,
-        orderBy: queryData.orderBy,
-        sortOrder: queryData.sortOrder
-      });
+    search() {
       this.$store.dispatch("GET_CARS", {
         page: 1,
         keyword: this.searchQuery,
-        orderBy: queryData.orderBy,
-        sortOrder: queryData.sortOrder
+        orderBy: this.QUERY_DATA.orderBy,
+        sortOrder: this.QUERY_DATA.sortOrder
       });
     }
   }

@@ -14,29 +14,15 @@ const store = new Vuex.Store({
     queryData: { page: 1, keyword: '', orderBy: null, sortOrder: null }
   },
   getters: {
-    CARS: state => {
-      return state.cars;
-    },
-    PAGINATION_DATA: state => {
-      return state.paginationData;
-    },
-    QUERY_DATA: state => {
-      return state.queryData;
-    }
+    CARS: state => state.cars,
+    PAGINATION_DATA: state => state.paginationData,
+    QUERY_DATA: state => state.queryData
   },
   mutations: {
-    SET_CARS: (state, payload) => {
-      return (state.cars = payload);
-    },
-    ADD_CAR: (state, payload) => {
-      return [...state.cars, payload];
-    },
-    SET_PAGINATION_DATA: (state, payload) => {
-      return (state.paginationData = payload);
-    },
-    SET_QUERY_DATA: (state, payload) => {
-      return (state.queryData = payload);
-    }
+    SET_CARS: (state, payload) => (state.cars = payload),
+    ADD_CAR: (state, payload) => [...state.cars, payload],
+    SET_PAGINATION_DATA: (state, payload) => (state.paginationData = payload),
+    SET_QUERY_DATA: (state, payload) => (state.queryData = payload)
   },
   actions: {
     GET_CARS: async (context, payload) => {
@@ -56,13 +42,13 @@ const store = new Vuex.Store({
           : searchParams.append('sort_order', 'asc');
       }
 
-      console.log(`${API_URL}?${searchParams}`);
-      console.log(payload);
+      let { data, status } = await axios.get(`${API_URL}?${searchParams}`);
 
-      let { data } = await axios.get(`${API_URL}?${searchParams}`);
-
-      context.commit('SET_CARS', data.results);
-      context.commit('SET_PAGINATION_DATA', data.pagination);
+      if (status === 200) {
+        context.commit('SET_CARS', data.results);
+        context.commit('SET_PAGINATION_DATA', data.pagination);
+        context.commit('SET_QUERY_DATA', payload);
+      }
     },
 
     SAVE_CAR: async (context, payload) => {

@@ -4,7 +4,7 @@
       id="prev-page-arrow"
       type="button"
       :disabled="PAGINATION_DATA.current_page === 1"
-      @click="() => goToPreviousPage(QUERY_DATA)"
+      @click="goToPreviousPage"
     >
       <i class="fas fa-angle-left"></i>
     </button>
@@ -16,7 +16,7 @@
       id="next-page-arrow"
       type="button"
       :disabled="PAGINATION_DATA.current_page === PAGINATION_DATA.total_pages"
-      @click="() => goToNextPage(QUERY_DATA)"
+      @click="goToNextPage"
     >
       <i class="fas fa-angle-right"></i>
     </button>
@@ -32,37 +32,21 @@ export default {
   },
 
   methods: {
-    goToNextPage(queryData) {
-      console.log(queryData.page);
-      this.$store.dispatch("CHANGE_QUERY_DATA", {
-        page: queryData.page + 1,
-        keyword: queryData.keyword,
-        orderBy: queryData.orderBy,
-        sortOrder: queryData.sortOrder
-      });
-
+    goToNextPage() {
       this.$store.dispatch("GET_CARS", {
-        page: queryData.page + 1,
-        keyword: queryData.keyword,
-        orderBy: queryData.orderBy,
-        sortOrder: queryData.sortOrder
+        page: this.QUERY_DATA.page + 1,
+        keyword: this.QUERY_DATA.keyword,
+        orderBy: this.QUERY_DATA.orderBy,
+        sortOrder: this.QUERY_DATA.sortOrder
       });
     },
 
-    goToPreviousPage(queryData) {
-      console.log(queryData.page);
-      this.$store.dispatch("CHANGE_QUERY_DATA", {
-        page: queryData.page - 1,
-        keyword: queryData.keyword,
-        orderBy: queryData.orderBy,
-        sortOrder: queryData.sortOrder
-      });
-
+    goToPreviousPage() {
       this.$store.dispatch("GET_CARS", {
-        page: queryData.page - 1,
-        keyword: queryData.keyword,
-        orderBy: queryData.orderBy,
-        sortOrder: queryData.sortOrder
+        page: this.QUERY_DATA.page - 1,
+        keyword: this.QUERY_DATA.keyword,
+        orderBy: this.QUERY_DATA.orderBy,
+        sortOrder: this.QUERY_DATA.sortOrder
       });
     }
   }
