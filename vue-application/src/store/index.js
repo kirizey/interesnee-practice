@@ -1,80 +1,77 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 
+import axios from 'axios';
+
 Vue.use(Vuex);
 
 const API_URL = 'https://backend-jscamp.saritasa-hosting.com/api/cars';
 
-const sendFetch = (method, endpoint, data, options) =>
-  new Promise((resolve, reject) => {
-    const requestHeaders = new Headers();
-    const stringifiedData = JSON.stringify(data);
-
-    if (method === 'POST' || method === 'PUT') {
-      requestHeaders.append('content-type', 'application/json');
-    }
-
-    if (method === 'GET') {
-      const searchParams = new URLSearchParams();
-
-      searchParams.append('page', options.page);
-      searchParams.append('keyword', options.searchQuery);
-
-      if (options.orderBy) {
-        searchParams.append('order_by', options.orderBy);
-        searchParams.append('sort_order', options.sortOrder);
-      }
-      endpoint += `?${searchParams}`;
-    }
-
-    method === 'GET'
-      ? fetch(endpoint, { method }).then(result => {
-          if (result.ok) {
-            return resolve(result.json());
-          }
-
-          return reject(result.status);
-        })
-      : fetch(endpoint, { method, headers: requestHeaders, body: stringifiedData }).then(
-          result => {
-            if (result.ok) {
-              return resolve(result.json());
-            }
-
-            return reject(result.status);
-          }
-        );
-  });
-
-const pushError = status => {
-  const error = new Error(status);
-
-  error.code = status;
-
-  return error;
-};
-
 const store = new Vuex.Store({
   state: {
-    results: []
+    cars: null,
+    paginationData: {},
+    queryData: { page: 1, keyword: '', orderBy: null, sortOrder: null }
+  },
+  getters: {
+    CARS: state => {
+      return state.cars;
+    },
+    PAGINATION_DATA: state => {
+      return state.paginationData;
+    },
+    QUERY_DATA: state => {
+      return state.queryData;
+    }
   },
   mutations: {
-    set(state, { type, items }) {
-      state[type] = items;
+    SET_CARS: (state, payload) => {
+      return (state.cars = payload);
+    },
+    ADD_CAR: (state, payload) => {
+      return [...state.cars, payload];
+    },
+    SET_PAGINATION_DATA: (state, payload) => {
+      return (state.paginationData = payload);
+    },
+    SET_QUERY_DATA: (state, payload) => {
+      return (state.queryData = payload);
     }
   },
   actions: {
-    search({ commit }, searchQuery = '', page = 1) {
-      sendFetch('GET', API_URL, '', { page, searchQuery })
-        .then(res => commit('set', { type: 'results', items: res.results }))
-        .catch(error => {
-          if (error === 503) return pushError(503);
-        });
+    GET_CARS: async (context, payload) => {
+      const searchParams = new URLSearchParams();
+      payload.page
+        ? searchParams.append('page', payload.page)
+        : searchParams.append('page', 1);
+
+      payload.keyword
+        ? searchParams.append('keyword', payload.keyword)
+        : searchParams.append('keyword', '');
+
+      if (payload.orderBy) {
+        searchParams.append('order_by', payload.orderBy);
+        payload.sortOrder
+          ? searchParams.append('sort_order', payload.sortOrder)
+          : searchParams.append('sort_order', 'asc');
+      }
+
+      console.log(`${API_URL}?${searchParams}`);
+      console.log(payload);
+
+      let { data } = await axios.get(`${API_URL}?${searchParams}`);
+
+      context.commit('SET_CARS', data.results);
+      context.commit('SET_PAGINATION_DATA', data.pagination);
     },
-    getCars({ commit }, page = 1) {
-      sendFetch('GET', API_URL, '', { page }).then(res =>
-        commit('set', { type: 'getResults', items: res.results })
-      );
+
+    SAVE_CAR: async (context, payload) => {
+      let { data } = await axios.post(API_URL);
+      context.commit('ADD_CAR', payload);
+    },
+
+    CHANGE_QUERY_DATA: (context, payload) => {
+      context.commit('SET_QUERY_DATA', payload);
     }
   }
 });

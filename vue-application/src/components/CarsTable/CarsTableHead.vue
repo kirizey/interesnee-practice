@@ -72,9 +72,7 @@
 </template>
 
 <script>
-export default {
-  name: "CarsTableHead"
-};
+export default {};
 </script>
 
 <style scoped>

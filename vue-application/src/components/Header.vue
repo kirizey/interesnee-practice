@@ -5,7 +5,7 @@
 
       <div class="header__right-side">
         <button class="header__create-car-btn" type="button">Add car</button>
-        <form @submit="search">
+        <form @submit.prevent="() => search(QUERY_DATA)">
           <input type="search" placeholder="Type search query..." v-model="searchQuery">
         </form>
 
@@ -17,6 +17,8 @@
 
 
 <script>
+import { mapGetters } from "vuex";
+
 export default {
   name: "Header",
   data() {
@@ -24,10 +26,23 @@ export default {
       searchQuery: ""
     };
   },
+  computed: {
+    ...mapGetters(["QUERY_DATA"])
+  },
   methods: {
-    search(e) {
-      e.preventDefault();
-      this.$store.dispatch("search", this.searchQuery);
+    search(queryData) {
+      this.$store.dispatch("CHANGE_QUERY_DATA", {
+        page: 1,
+        keyword: this.searchQuery,
+        orderBy: queryData.orderBy,
+        sortOrder: queryData.sortOrder
+      });
+      this.$store.dispatch("GET_CARS", {
+        page: 1,
+        keyword: this.searchQuery,
+        orderBy: queryData.orderBy,
+        sortOrder: queryData.sortOrder
+      });
     }
   }
 };

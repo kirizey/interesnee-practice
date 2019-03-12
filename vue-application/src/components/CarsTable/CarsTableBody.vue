@@ -1,6 +1,6 @@
 <template>
   <tbody class="cars-list__body">
-    <tr v-bind:key="car.id" v-for="car in results">
+    <tr v-bind:key="car.id" v-for="car in CARS">
       <th>{{car.make.name}}</th>
       <th>{{car.car_model.name}}</th>
       <th>{{car.body_type.name}}</th>
@@ -14,20 +14,11 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+
 export default {
-  name: "CarsTableBody",
-  data() {
-    return {
-      // cars: [...this.$store.state.results]
-    };
-  },
   computed: {
-    results() {
-      return this.$store.state.results;
-    }
-  },
-  created() {
-    this.$store.dispatch("getCars").then(res => res);
+    ...mapGetters(["CARS"])
   }
 };
 </script>

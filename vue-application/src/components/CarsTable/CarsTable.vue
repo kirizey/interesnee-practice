@@ -1,10 +1,10 @@
 <template>
   <main class="container">
-    <CarsTablePaginator/>
+    <cars-table-paginator/>
 
     <table class="cars-list">
-      <CarsTableHead/>
-      <CarsTableBody/>
+      <cars-table-head/>
+      <cars-table-body/>
     </table>
   </main>
 </template>
@@ -20,6 +20,9 @@ export default {
     CarsTableHead,
     CarsTableBody,
     CarsTablePaginator
+  },
+  mounted() {
+    this.$store.dispatch("GET_CARS", {});
   }
 };
 </script>
