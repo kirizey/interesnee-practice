@@ -28,12 +28,16 @@ const mutations = {
   SET_CARS_ARTER_DELETE_ONE: (state, payload) =>
     (state.cars = state.cars.filter(car => car.id !== payload)),
   SET_CARS_AFTER_UPDATE: (state, payload) => {
-    let updatedCars = state.cars.map(car => {
+    state.cars.map(car => {
       if (car.id === payload.id) {
-        car = payload;
+        car.body_type = payload.body_type;
+        car.car_model_id = payload.car_model_id;
+        car.make_id = payload.make_id;
+        car.year = payload.year;
+        car.mileage = payload.mileage;
+        car.description = payload.description;
       }
     });
-    state.cars = updatedCars;
   }
 };
 

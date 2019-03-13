@@ -4,7 +4,7 @@
       <div class="modal-wrapper">
         <div class="modal-container">
           <form class="car-form">
-            <h2 class="title">Add new car</h2>
+            <h2 class="title">{{modalTitle}}</h2>
 
             <div class="form-group" :class="{ 'form-group--error':!$v.body_type_id.required }">
               <label for="bodyTypeName">Body type:</label>
@@ -130,7 +130,8 @@ export default {
       car_model_id: null,
       year: null,
       mileage: null,
-      description: null
+      description: null,
+      modalTitle: "Add new car"
     };
   },
 
@@ -200,7 +201,7 @@ export default {
           description: this.description
         }).then(() => {
           this.closeModal();
-          this.PUSH_SNACKBAR(`Deleted car № ${carId}`);
+          this.PUSH_SNACKBAR(`Updated car № ${carId}`);
         });
       }
     }
@@ -208,12 +209,15 @@ export default {
 
   mounted() {
     if (this.CARS_MODAL_OPTIONS.data) {
-      this.body_type_id = this.CARS_MODAL_OPTIONS.data.body_type_id;
-      this.make_id = this.CARS_MODAL_OPTIONS.data.make_id;
-      this.car_model_id = this.CARS_MODAL_OPTIONS.data.car_model_id;
-      this.year = this.CARS_MODAL_OPTIONS.data.year;
-      this.mileage = this.CARS_MODAL_OPTIONS.data.mileage;
-      this.description = this.CARS_MODAL_OPTIONS.data.description;
+      const carData = this.CARS_MODAL_OPTIONS.data;
+      this.body_type_id = carData.body_type_id;
+      this.make_id = carData.make_id;
+      this.car_model_id = carData.car_model_id;
+      this.year = carData.year;
+      this.mileage = carData.mileage;
+      this.description = carData.description;
+
+      this.modalTitle = `Update car № ${carData.id}`;
     }
   }
 };
