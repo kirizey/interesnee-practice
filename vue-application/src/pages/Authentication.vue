@@ -2,19 +2,22 @@
   <div class="authentication__wrap">
     <form class="authentication-form">
       <h2 class="title">Authorization</h2>
-      <div class="form-group">
+      <div class="form-group" :class="{ 'form-group--error':!$v.email.required }">
         <label for="email">Email:</label>
         <div class="form-group__input-wrapper">
           <input type="email" id="email" v-model="email">
         </div>
       </div>
+      <div class="error" v-if="!$v.email.required">Field is required</div>
 
-      <div class="form-group">
+      <div class="form-group" :class="{ 'form-group--error':!$v.password.required }">
         <label for="password">Password:</label>
         <div class="form-group__input-wrapper">
           <input type="password" id="password" v-model="password">
         </div>
       </div>
+      <div class="error" v-if="!$v.password.required">Field is required</div>
+
       <div class="form-group form-btns">
         <button class="primary" type="button" @click="login">Sign in</button>
       </div>
@@ -24,6 +27,7 @@
 
 <script>
 import { mapGetters, mapActions } from "vuex";
+import { required } from "vuelidate/lib/validators";
 
 export default {
   name: "Authentication",
@@ -31,10 +35,14 @@ export default {
   data() {
     return {
       email: "",
-      password: ""
+      password: "",
+      submitStatus: ""
     };
   },
-
+  validations: {
+    email: { required },
+    password: { required }
+  },
   computed: {
     ...mapGetters(["USER_TOKEN"])
   },
@@ -42,16 +50,22 @@ export default {
   methods: {
     ...mapActions(["LOGIN"]),
     login() {
-      this.LOGIN({
-        email: this.email,
-        password: this.password
-      })
-        .then(() => {
-          this.USER_TOKEN.value
-            ? this.$router.push(this.$route.query.redirect || "/")
-            : this.$router.push("/auth");
+      this.$v.$touch();
+
+      if (this.$v.$invalid) {
+        this.submitStatus = "ERROR";
+      } else {
+        this.LOGIN({
+          email: this.email,
+          password: this.password
         })
-        .catch(error => error);
+          .then(() => {
+            this.USER_TOKEN.value
+              ? this.$router.push(this.$route.query.redirect || "/")
+              : this.$router.push("/auth");
+          })
+          .catch(error => error);
+      }
     }
   }
 };

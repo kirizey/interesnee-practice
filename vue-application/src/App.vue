@@ -61,4 +61,28 @@ h2.title::after {
   align-items: center;
   margin: 0 20px;
 }
+
+.form-group--error + .error {
+  display: block;
+  color: #f57f6c;
+}
+.error {
+  font-size: 0.75rem;
+  line-height: 1;
+  text-align: right;
+  display: none;
+  margin-right: 27px;
+  margin-bottom: 2px;
+}
+.form-group--error input,
+.form-group--error textarea,
+.form-group--error select,
+.form-group--error input:focus,
+.form-group--error input:hover {
+  border-color: #f79483;
+}
+
+.form-group--error label {
+  color: #f04124;
+}
 </style>

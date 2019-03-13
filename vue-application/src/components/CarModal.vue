@@ -6,7 +6,7 @@
           <form class="car-form">
             <h2 class="title">Add new car</h2>
 
-            <div class="form-group">
+            <div class="form-group" :class="{ 'form-group--error':!$v.body_type_id.required }">
               <label for="bodyTypeName">Body type:</label>
               <div class="form-group__input-wrapper">
                 <select v-model="body_type_id" id="bodyTypeName" required>
@@ -16,8 +16,9 @@
                 </select>
               </div>
             </div>
+            <div class="error" v-if="!$v.body_type_id.required">Field is required</div>
 
-            <div class="form-group">
+            <div class="form-group" :class="{ 'form-group--error':!$v.make_id.required }">
               <label for="makeName">Make:</label>
               <div class="form-group__input-wrapper">
                 <select v-model="make_id" id="makeName" required>
@@ -27,8 +28,9 @@
                 </select>
               </div>
             </div>
+            <div class="error" v-if="!$v.make_id.required">Field is required</div>
 
-            <div class="form-group">
+            <div class="form-group" :class="{ 'form-group--error':!$v.car_model_id.required }">
               <label for="carModel">Model:</label>
               <div class="form-group__input-wrapper">
                 <select v-model="car_model_id" id="carModel" required>
@@ -40,26 +42,36 @@
                 </select>
               </div>
             </div>
+            <div class="error" v-if="!$v.car_model_id.required">Field is required</div>
 
-            <div class="form-group">
+            <div
+              class="form-group"
+              :class="{ 'form-group--error':!$v.year.between ||!$v.year.required }"
+            >
               <label for="year">Year:</label>
               <div class="form-group__input-wrapper">
-                <input v-model="year" type="number" min="1900" required>
+                <input v-model="year" type="number" required>
               </div>
             </div>
+            <div class="error" v-if="!$v.year.required">Field is required</div>
+            <div
+              class="error"
+              v-if="!$v.year.between"
+            >Must be between {{$v.year.$params.between.min}} and {{$v.year.$params.between.max}}</div>
 
-            <div class="form-group">
+            <div class="form-group" :class="{ 'form-group--error':!$v.mileage.required }">
               <label for="mileage">Mileage:</label>
               <div class="form-group__input-wrapper">
                 <input type="number" v-model="mileage" id="mileage" required>
               </div>
             </div>
+            <div class="error" v-if="!$v.mileage.required">Field is required</div>
 
-            <div class="form-group">
+            <div class="form-group" :class="{ 'form-group--error':!$v.description.required }">
               <label for="carDescription">Description:</label>
             </div>
 
-            <div class="form-group">
+            <div class="form-group" :class="{ 'form-group--error':!$v.description.required }">
               <div class="form-group__input-wrapper">
                 <textarea
                   v-model="description"
@@ -71,6 +83,7 @@
                 ></textarea>
               </div>
             </div>
+            <div class="error" v-if="!$v.description.required">Field is required</div>
 
             <div class="form-group car-form__btns form__btns">
               <button
@@ -105,6 +118,7 @@
 
 <script>
 import { mapGetters, mapActions } from "vuex";
+import { required, between } from "vuelidate/lib/validators";
 
 export default {
   computed: { ...mapGetters(["CARS_MODAL_OPTIONS"]) },
@@ -117,6 +131,14 @@ export default {
       mileage: null,
       description: null
     };
+  },
+  validations: {
+    body_type_id: { required },
+    make_id: { required },
+    car_model_id: { required },
+    year: { required, between: between(1900, new Date().getFullYear()) },
+    mileage: { required },
+    description: { required }
   },
   methods: {
     ...mapActions([
@@ -133,16 +155,19 @@ export default {
       });
     },
     createCar() {
-      this.CREATE_CAR({
-        body_type_id: this.body_type_id,
-        make_id: this.make_id,
-        car_model_id: this.car_model_id,
-        year: this.year,
-        mileage: this.mileage,
-        description: this.description
-      });
+      this.$v.$touch();
+      if (!this.$v.$invalid) {
+        this.CREATE_CAR({
+          body_type_id: this.body_type_id,
+          make_id: this.make_id,
+          car_model_id: this.car_model_id,
+          year: this.year,
+          mileage: this.mileage,
+          description: this.description
+        });
 
-      this.closeModal();
+        this.closeModal();
+      }
     },
 
     deleteCar() {
@@ -151,16 +176,20 @@ export default {
     },
 
     updateCar() {
-      this.UPDATE_CAR({
-        id: this.CARS_MODAL_OPTIONS.data.id,
-        body_type_id: this.body_type_id,
-        make_id: this.make_id,
-        car_model_id: this.car_model_id,
-        year: this.year,
-        mileage: this.mileage,
-        description: this.description
-      });
-      this.closeModal();
+      this.$v.$touch();
+
+      if (!this.$v.$invalid) {
+        this.UPDATE_CAR({
+          id: this.CARS_MODAL_OPTIONS.data.id,
+          body_type_id: this.body_type_id,
+          make_id: this.make_id,
+          car_model_id: this.car_model_id,
+          year: this.year,
+          mileage: this.mileage,
+          description: this.description
+        });
+        this.closeModal();
+      }
     }
   },
   mounted() {
@@ -177,6 +206,31 @@ export default {
 </script>
 
 <style scoped>
+textarea {
+  width: 100%;
+  margin-top: 10px;
+}
+
+button.delete {
+  background-color: #c82333;
+  border-color: #bd2130;
+  color: #fff;
+}
+
+button.delete:hover {
+  background-color: #b82030;
+}
+
+button.edit {
+  color: #212529;
+  background-color: #ffc107;
+  border-color: #ffc107;
+}
+
+button.edit:hover {
+  background-color: #f7b900;
+}
+
 .modal-mask {
   position: fixed;
   z-index: 9998;
@@ -230,30 +284,5 @@ export default {
 .modal-leave-active .modal-container {
   -webkit-transform: scale(1.1);
   transform: scale(1.1);
-}
-
-textarea {
-  width: 100%;
-  margin-top: 10px;
-}
-
-button.delete {
-  background-color: #c82333;
-  border-color: #bd2130;
-  color: #fff;
-}
-
-button.delete:hover {
-  background-color: #b82030;
-}
-
-button.edit {
-  color: #212529;
-  background-color: #ffc107;
-  border-color: #ffc107;
-}
-
-button.edit:hover {
-  background-color: #f7b900;
 }
 </style>
