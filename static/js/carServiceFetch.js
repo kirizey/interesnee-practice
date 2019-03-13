@@ -68,7 +68,6 @@ export class CarService {
    */
   constructor() {
     this.apiUrl = 'https://backend-jscamp.saritasa-hosting.com/api/with-auth/cars';
-    this.authUrl = 'https://backend-jscamp.saritasa-hosting.com/api/auth';
   }
 
   /**
@@ -144,6 +143,18 @@ export class CarService {
 
         return pushError(400);
       });
+  }
+}
+
+/**
+ * Class provies auth methods
+ */
+export class AuthenticationService {
+  /**
+   * Constructor of class.
+   */
+  constructor() {
+    this.authUrl = 'https://backend-jscamp.saritasa-hosting.com/api/auth';
   }
 
   /**

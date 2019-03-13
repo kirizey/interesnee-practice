@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/extensions
-import { CarService } from './carServiceFetch.js';
+import { CarService, AuthenticationService } from './carServiceFetch.js';
 
 // table elements
 const tableBodyElement = document.querySelector('.cars-list__body');
@@ -52,6 +52,7 @@ const yearField = carForm.elements.year;
 
 // service provide api methods
 const carService = new CarService();
+const authenticationService = new AuthenticationService();
 
 let cars = [];
 let searchQuery = '';
@@ -591,7 +592,7 @@ const login = e => {
     password: e.target.elements.password.value,
   };
 
-  carService
+  authenticationService
     .login(formData)
     .then(() => {
       if (localStorage.userToken) {
@@ -614,7 +615,7 @@ const login = e => {
  * Make logout and remove table items.
  */
 const logout = () => {
-  carService.logout();
+  authenticationService.logout();
   showAuthBtns();
 
   while (tableBodyElement.firstChild) {
@@ -623,7 +624,7 @@ const logout = () => {
 };
 
 (function() {
-  const authState = carService.checkAuthState();
+  const authState = authenticationService.checkAuthState();
 
   if (authState) {
     hideAuthBtns();
