@@ -35,8 +35,7 @@ export default {
   data() {
     return {
       email: "",
-      password: "",
-      submitStatus: ""
+      password: ""
     };
   },
   validations: {
@@ -52,9 +51,7 @@ export default {
     login() {
       this.$v.$touch();
 
-      if (this.$v.$invalid) {
-        this.submitStatus = "ERROR";
-      } else {
+      if (!this.$v.$invalid) {
         this.LOGIN({
           email: this.email,
           password: this.password

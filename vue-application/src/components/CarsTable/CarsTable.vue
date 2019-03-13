@@ -13,6 +13,7 @@
 import CarsTableHead from "./CarsTableHead.vue";
 import CarsTableBody from "./CarsTableBody.vue";
 import CarsTablePaginator from "./CarsTablePaginator";
+import { mapActions } from "vuex";
 
 export default {
   components: {
@@ -21,7 +22,15 @@ export default {
     CarsTablePaginator
   },
   mounted() {
-    this.$store.dispatch("GET_CARS", { page: 1 });
+    this.renderInitialData();
+  },
+
+  methods: {
+    ...mapActions(["GET_CARS"]),
+
+    renderInitialData() {
+      this.GET_CARS({ page: 1 });
+    }
   }
 };
 </script>

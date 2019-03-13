@@ -70,10 +70,6 @@ const actions = {
     } catch (error) {
       context.commit('TOGGLE_SNACKBAR', 'Network error...');
 
-      setTimeout(() => {
-        context.commit('TOGGLE_SNACKBAR', '');
-      }, 2000);
-
       if (error.response.status === 503) {
         return store.dispatch('GET_CARS', payload);
       }
@@ -92,10 +88,6 @@ const actions = {
       }
     } catch (error) {
       context.commit('TOGGLE_SNACKBAR', 'Network error...');
-
-      setTimeout(() => {
-        context.commit('TOGGLE_SNACKBAR', '');
-      }, 2000);
 
       if (error.response.status === 503) {
         return store.dispatch('CREATE_CAR', payload);
@@ -126,18 +118,11 @@ const actions = {
       if (error.response.status === 503) {
         context.commit('TOGGLE_SNACKBAR', 'Network error...');
 
-        setTimeout(() => {
-          context.commit('TOGGLE_SNACKBAR', '');
-        }, 2000);
         return store.dispatch('DELETE_CAR', payload);
       }
 
-      if (status === 404) {
+      if (error.response.status === 404) {
         context.commit('TOGGLE_SNACKBAR', 'This car already deleted');
-
-        setTimeout(() => {
-          context.commit('TOGGLE_SNACKBAR', '');
-        }, 2000);
       }
     }
   },
@@ -159,10 +144,6 @@ const actions = {
       }
     } catch (error) {
       context.commit('TOGGLE_SNACKBAR', 'Network error...');
-
-      setTimeout(() => {
-        context.commit('TOGGLE_SNACKBAR', '');
-      }, 2000);
 
       if (error.response.status === 503) {
         return store.dispatch('UPDATE_CAR', payload);

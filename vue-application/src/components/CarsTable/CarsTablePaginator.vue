@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 
 export default {
   computed: {
@@ -32,8 +32,10 @@ export default {
   },
 
   methods: {
+    ...mapActions(["GET_CARS"]),
+
     goToNextPage() {
-      this.$store.dispatch("GET_CARS", {
+      this.GET_CARS({
         page: this.QUERY_DATA.page + 1,
         keyword: this.QUERY_DATA.keyword,
         orderBy: this.QUERY_DATA.orderBy,
@@ -42,7 +44,7 @@ export default {
     },
 
     goToPreviousPage() {
-      this.$store.dispatch("GET_CARS", {
+      this.GET_CARS({
         page: this.QUERY_DATA.page - 1,
         keyword: this.QUERY_DATA.keyword,
         orderBy: this.QUERY_DATA.orderBy,

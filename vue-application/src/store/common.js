@@ -9,10 +9,16 @@ const getters = {
 const mutations = {
   TOGGLE_SNACKBAR: (state, payload) => {
     state.shanckbar = { visible: !state.shanckbar.visible, message: payload };
+
+    setTimeout(() => {
+      state.shanckbar = { visible: !state.shanckbar.visible, message: '' };
+    }, 2000);
   }
 };
 
-const actions = {};
+const actions = {
+  PUSH_SNACKBAR: (context, payload) => context.commit('TOGGLE_SNACKBAR', payload)
+};
 
 export default {
   state,

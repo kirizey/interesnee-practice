@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 
 export default {
   data() {
@@ -45,13 +45,15 @@ export default {
     };
   },
   methods: {
+    ...mapActions(["GET_CARS"]),
+
     selectSort(sName, sortOrder) {
       this.selectedFilter = {
         sName: sName,
         order: sortOrder
       };
 
-      this.$store.dispatch("GET_CARS", {
+      this.GET_CARS({
         page: 1,
         keyword: this.QUERY_DATA.keyword,
         orderBy: sName,

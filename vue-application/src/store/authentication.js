@@ -30,12 +30,8 @@ const actions = {
         return store.dispatch('LOGIN', payload);
       }
 
-      if (status === 404) {
+      if (error.response.status === 404) {
         context.commit('TOGGLE_SNACKBAR', 'Invalid email or password...');
-
-        setTimeout(() => {
-          context.commit('TOGGLE_SNACKBAR', '');
-        }, 2000);
       }
     }
   },

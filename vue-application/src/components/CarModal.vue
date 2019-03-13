@@ -122,6 +122,7 @@ import { required, between } from "vuelidate/lib/validators";
 
 export default {
   computed: { ...mapGetters(["CARS_MODAL_OPTIONS"]) },
+
   data() {
     return {
       body_type_id: null,
@@ -132,6 +133,7 @@ export default {
       description: null
     };
   },
+
   validations: {
     body_type_id: { required },
     make_id: { required },
@@ -140,12 +142,14 @@ export default {
     mileage: { required },
     description: { required }
   },
+
   methods: {
     ...mapActions([
       "CHANGE_CARS_MODAL_OPTIONS",
       "CREATE_CAR",
       "DELETE_CAR",
-      "UPDATE_CAR"
+      "UPDATE_CAR",
+      "PUSH_SNACKBAR"
     ]),
 
     closeModal() {
@@ -154,6 +158,7 @@ export default {
         data: null
       });
     },
+
     createCar() {
       this.$v.$touch();
       if (!this.$v.$invalid) {
@@ -164,34 +169,43 @@ export default {
           year: this.year,
           mileage: this.mileage,
           description: this.description
+        }).then(() => {
+          this.closeModal();
+          this.PUSH_SNACKBAR("Created");
         });
-
-        this.closeModal();
       }
     },
 
     deleteCar() {
-      this.DELETE_CAR(this.CARS_MODAL_OPTIONS.data.id);
-      this.closeModal();
+      const carId = this.CARS_MODAL_OPTIONS.data.id;
+      this.DELETE_CAR(carId).then(() => {
+        this.closeModal();
+        this.PUSH_SNACKBAR(`Deleted car № ${carId}`);
+      });
     },
 
     updateCar() {
+      let carId = this.CARS_MODAL_OPTIONS.data.id;
+
       this.$v.$touch();
 
       if (!this.$v.$invalid) {
         this.UPDATE_CAR({
-          id: this.CARS_MODAL_OPTIONS.data.id,
+          id: carId,
           body_type_id: this.body_type_id,
           make_id: this.make_id,
           car_model_id: this.car_model_id,
           year: this.year,
           mileage: this.mileage,
           description: this.description
+        }).then(() => {
+          this.closeModal();
+          this.PUSH_SNACKBAR(`Deleted car № ${carId}`);
         });
-        this.closeModal();
       }
     }
   },
+
   mounted() {
     if (this.CARS_MODAL_OPTIONS.data) {
       this.body_type_id = this.CARS_MODAL_OPTIONS.data.body_type_id;
