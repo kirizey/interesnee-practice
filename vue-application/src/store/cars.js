@@ -39,7 +39,7 @@ const mutations = {
 
 const actions = {
   GET_CARS: async (context, payload) => {
-    let userToken = localStorage.getItem('userToken');
+    const userToken = localStorage.getItem('userToken');
 
     const searchParams = new URLSearchParams();
     payload.page
@@ -58,7 +58,7 @@ const actions = {
     }
 
     try {
-      let { data, status } = await axios.get(`${API_WITH_AUTH_URL}?${searchParams}`, {
+      const { data, status } = await axios.get(`${API_WITH_AUTH_URL}?${searchParams}`, {
         headers: { Authorization: `Bearer ${userToken}` }
       });
 
@@ -78,9 +78,9 @@ const actions = {
 
   CREATE_CAR: async (context, payload) => {
     try {
-      let userToken = localStorage.getItem('userToken');
+      const userToken = localStorage.getItem('userToken');
 
-      let { data, status } = await axios.post(API_WITH_AUTH_URL, payload, {
+      const { data, status } = await axios.post(API_WITH_AUTH_URL, payload, {
         headers: { Authorization: `Bearer ${userToken}` }
       });
       if (status === 200) {
@@ -105,9 +105,9 @@ const actions = {
 
   DELETE_CAR: async (context, payload) => {
     try {
-      let userToken = localStorage.getItem('userToken');
+      const userToken = localStorage.getItem('userToken');
 
-      let { status } = await axios.delete(`${API_WITH_AUTH_URL}/${payload}`, {
+      const { status } = await axios.delete(`${API_WITH_AUTH_URL}/${payload}`, {
         headers: { Authorization: `Bearer ${userToken}` }
       });
 
@@ -129,9 +129,9 @@ const actions = {
 
   UPDATE_CAR: async (context, payload) => {
     try {
-      let userToken = localStorage.getItem('userToken');
+      const userToken = localStorage.getItem('userToken');
 
-      let { data, status } = await axios.put(
+      const { data, status } = await axios.put(
         `${API_WITH_AUTH_URL}/${payload.id}`,
         payload,
         {
