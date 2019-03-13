@@ -64,19 +64,39 @@ const store = new Vuex.Store({
           : searchParams.append('sort_order', 'asc');
       }
 
-      let { data, status } = await axios.get(`${API_URL}?${searchParams}`);
+      try {
+        let { data, status } = await axios.get(`${API_URL}?${searchParams}`);
 
-      if (status === 200) {
-        context.commit('SET_CARS', data.results);
-        context.commit('SET_PAGINATION_DATA', data.pagination);
-        context.commit('SET_QUERY_DATA', payload);
+        if (status === 200) {
+          context.commit('SET_CARS', data.results);
+          context.commit('SET_PAGINATION_DATA', data.pagination);
+          context.commit('SET_QUERY_DATA', payload);
+        }
+      } catch (error) {
+        context.commit('TOGGLE_SNACKBAR', 'Network error...');
+
+        setTimeout(() => {
+          context.commit('TOGGLE_SNACKBAR', '');
+        }, 2000);
+
+        return store.dispatch('GET_CARS', payload);
       }
     },
 
     CREATE_CAR: async (context, payload) => {
-      let { data, status } = await axios.post(API_URL, payload);
-      if (status === 200) {
-        context.commit('ADD_CAR', data);
+      try {
+        let { data, status } = await axios.post(API_URL, payload);
+        if (status === 200) {
+          context.commit('ADD_CAR', data);
+        }
+      } catch (error) {
+        context.commit('TOGGLE_SNACKBAR', 'Network error...');
+
+        setTimeout(() => {
+          context.commit('TOGGLE_SNACKBAR', '');
+        }, 2000);
+
+        return store.dispatch('CREATE_CAR', payload);
       }
     },
 
@@ -90,32 +110,59 @@ const store = new Vuex.Store({
 
     DELETE_CAR: async (context, payload) => {
       try {
-        let { data, status } = await axios.delete(`${API_URL}/${payload}`);
+        let { status } = await axios.delete(`${API_URL}/${payload}`);
 
         if (status === 204) {
           context.commit('SET_CARS_ARTER_DELETE_ONE', payload);
         }
       } catch (error) {
-        context.commit('TOGGLE_SNACKBAR', error);
+        if (status === 503) {
+          context.commit('TOGGLE_SNACKBAR', 'Network error...');
+        }
 
+        if (status === 404) {
+          context.commit('TOGGLE_SNACKBAR', 'This car already deleted');
+        }
         setTimeout(() => {
-          context.commit('TOGGLE_SNACKBAR', error);
+          context.commit('TOGGLE_SNACKBAR', '');
         }, 2000);
+
+        return store.dispatch('DELETE_CAR', payload);
       }
     },
 
     UPDATE_CAR: async (context, payload) => {
-      let { data, status } = await axios.put(`${API_URL}/${payload.id}`, payload);
-      if (status === 200) {
-        context.commit('SET_CARS_AFTER_UPDATE', data);
+      try {
+        let { data, status } = await axios.put(`${API_URL}/${payload.id}`, payload);
+        if (status === 200) {
+          context.commit('SET_CARS_AFTER_UPDATE', data);
+        }
+      } catch (error) {
+        context.commit('TOGGLE_SNACKBAR', 'Network error...');
+
+        setTimeout(() => {
+          context.commit('TOGGLE_SNACKBAR', '');
+        }, 2000);
+
+        return store.dispatch('UPDATE_CAR', payload);
       }
     },
 
     LOGIN: async (context, payload) => {
-      let { data, status } = await axios.post(LOGIN_API, payload);
+      try {
+        let { data, status } = await axios.post(LOGIN_API, payload);
 
-      if (status === 200) {
-        context.commit('UPDATE_USER_TOKEN', data);
+        if (status === 200) {
+          context.commit('UPDATE_USER_TOKEN', data);
+        }
+      } catch (error) {
+        context.commit('TOGGLE_SNACKBAR', 'Network error...');
+
+        setTimeout(() => {
+          context.commit('TOGGLE_SNACKBAR', '');
+        }, 2000);
+
+        return store.dispatch('LOGIN', payload);
       }
     },
     LOGOUT: async (context, payload) => {
