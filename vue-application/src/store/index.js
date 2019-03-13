@@ -118,16 +118,20 @@ const store = new Vuex.Store({
       } catch (error) {
         if (status === 503) {
           context.commit('TOGGLE_SNACKBAR', 'Network error...');
+
+          setTimeout(() => {
+            context.commit('TOGGLE_SNACKBAR', '');
+          }, 2000);
+          return store.dispatch('DELETE_CAR', payload);
         }
 
         if (status === 404) {
           context.commit('TOGGLE_SNACKBAR', 'This car already deleted');
-        }
-        setTimeout(() => {
-          context.commit('TOGGLE_SNACKBAR', '');
-        }, 2000);
 
-        return store.dispatch('DELETE_CAR', payload);
+          setTimeout(() => {
+            context.commit('TOGGLE_SNACKBAR', '');
+          }, 2000);
+        }
       }
     },
 
@@ -165,6 +169,7 @@ const store = new Vuex.Store({
         return store.dispatch('LOGIN', payload);
       }
     },
+
     LOGOUT: async (context, payload) => {
       context.commit('UPDATE_USER_TOKEN', payload);
     }

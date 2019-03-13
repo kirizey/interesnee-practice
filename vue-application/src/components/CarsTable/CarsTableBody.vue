@@ -14,18 +14,17 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 
 export default {
   computed: {
     ...mapGetters(["CARS", "CARS_MODAL_OPTIONS"])
   },
   methods: {
+    ...mapActions(["CHANGE_CARS_MODAL_OPTIONS"]),
+
     openUpdateCarModal(car) {
-      this.$store.dispatch("CHANGE_CARS_MODAL_OPTIONS", {
-        opened: true,
-        data: car
-      });
+      this.CHANGE_CARS_MODAL_OPTIONS({ opened: true, data: car });
     }
   }
 };

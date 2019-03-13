@@ -104,7 +104,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 
 export default {
   computed: { ...mapGetters(["CARS_MODAL_OPTIONS"]) },
@@ -119,14 +119,21 @@ export default {
     };
   },
   methods: {
+    ...mapActions([
+      "CHANGE_CARS_MODAL_OPTIONS",
+      "CREATE_CAR",
+      "DELETE_CAR",
+      "UPDATE_CAR"
+    ]),
+
     closeModal() {
-      this.$store.dispatch("CHANGE_CARS_MODAL_OPTIONS", {
+      this.CHANGE_CARS_MODAL_OPTIONS({
         opened: false,
         data: null
       });
     },
     createCar() {
-      this.$store.dispatch("CREATE_CAR", {
+      this.CREATE_CAR({
         body_type_id: this.body_type_id,
         make_id: this.make_id,
         car_model_id: this.car_model_id,
@@ -139,12 +146,12 @@ export default {
     },
 
     deleteCar() {
-      this.$store.dispatch("DELETE_CAR", this.CARS_MODAL_OPTIONS.data.id);
+      this.DELETE_CAR(this.CARS_MODAL_OPTIONS.data.id);
       this.closeModal();
     },
 
     updateCar() {
-      this.$store.dispatch("UPDATE_CAR", {
+      this.UPDATE_CAR({
         id: this.CARS_MODAL_OPTIONS.data.id,
         body_type_id: this.body_type_id,
         make_id: this.make_id,
@@ -158,12 +165,12 @@ export default {
   },
   mounted() {
     if (this.CARS_MODAL_OPTIONS.data) {
-      (this.body_type_id = this.CARS_MODAL_OPTIONS.data.body_type_id),
-        (this.make_id = this.CARS_MODAL_OPTIONS.data.make_id),
-        (this.car_model_id = this.CARS_MODAL_OPTIONS.data.car_model_id),
-        (this.year = this.CARS_MODAL_OPTIONS.data.year),
-        (this.mileage = this.CARS_MODAL_OPTIONS.data.mileage),
-        (this.description = this.CARS_MODAL_OPTIONS.data.description);
+      this.body_type_id = this.CARS_MODAL_OPTIONS.data.body_type_id;
+      this.make_id = this.CARS_MODAL_OPTIONS.data.make_id;
+      this.car_model_id = this.CARS_MODAL_OPTIONS.data.car_model_id;
+      this.year = this.CARS_MODAL_OPTIONS.data.year;
+      this.mileage = this.CARS_MODAL_OPTIONS.data.mileage;
+      this.description = this.CARS_MODAL_OPTIONS.data.description;
     }
   }
 };

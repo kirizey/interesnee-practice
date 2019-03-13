@@ -19,7 +19,7 @@
 
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 
 export default {
   data() {
@@ -31,21 +31,25 @@ export default {
     ...mapGetters(["QUERY_DATA"])
   },
   methods: {
+    ...mapActions(["GET_CARS", "CHANGE_CARS_MODAL_OPTIONS", "LOGOUT"]),
+
     search() {
-      this.$store.dispatch("GET_CARS", {
+      this.GET_CARS({
         page: 1,
         keyword: this.searchQuery,
         orderBy: this.QUERY_DATA.orderBy,
         sortOrder: this.QUERY_DATA.sortOrder
       });
     },
+
     openCreateCarModal() {
-      this.$store.dispatch("CHANGE_CARS_MODAL_OPTIONS", { opened: true });
+      this.CHANGE_CARS_MODAL_OPTIONS({ opened: true });
     },
+
     logout() {
       this.$router.push(this.$route.query.redirect || "/auth");
 
-      this.$store.dispatch("LOGOUT", null);
+      this.LOGOUT(null);
     }
   }
 };
