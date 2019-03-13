@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 
 export default {
   name: "Authentication",
@@ -40,19 +40,18 @@ export default {
   },
 
   methods: {
+    ...mapActions(["LOGIN"]),
     login() {
-      this.$store.dispatch("LOGIN", {
+      this.LOGIN({
         email: this.email,
         password: this.password
-      });
-
-      setTimeout(() => {
-        if (this.USER_TOKEN.value) {
-          this.$router.push(this.$route.query.redirect || "/");
-        } else {
-          this.$router.push("/auth");
-        }
-      }, 1000);
+      })
+        .then(() => {
+          this.USER_TOKEN.value
+            ? this.$router.push(this.$route.query.redirect || "/")
+            : this.$router.push("/auth");
+        })
+        .catch(error => error);
     }
   }
 };

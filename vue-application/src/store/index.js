@@ -6,6 +6,8 @@ import axios from 'axios';
 Vue.use(Vuex);
 
 const API_URL = 'https://backend-jscamp.saritasa-hosting.com/api/cars';
+const API_WITH_AUTH_URL =
+  'https://backend-jscamp.saritasa-hosting.com/api/with-auth/cars';
 const LOGIN_API = 'https://backend-jscamp.saritasa-hosting.com/api/auth';
 
 const store = new Vuex.Store({
@@ -48,6 +50,8 @@ const store = new Vuex.Store({
   },
   actions: {
     GET_CARS: async (context, payload) => {
+      let userToken = localStorage.getItem('userToken');
+
       const searchParams = new URLSearchParams();
       payload.page
         ? searchParams.append('page', payload.page)
@@ -65,7 +69,12 @@ const store = new Vuex.Store({
       }
 
       try {
-        let { data, status } = await axios.get(`${API_URL}?${searchParams}`);
+        let { data, status, request } = await axios.get(
+          `${API_WITH_AUTH_URL}?${searchParams}`,
+          {
+            headers: { Authorization: `Bearer ${userToken}` }
+          }
+        );
 
         if (status === 200) {
           context.commit('SET_CARS', data.results);
@@ -79,13 +88,19 @@ const store = new Vuex.Store({
           context.commit('TOGGLE_SNACKBAR', '');
         }, 2000);
 
-        return store.dispatch('GET_CARS', payload);
+        if (error.response.status === 503) {
+          return store.dispatch('GET_CARS', payload);
+        }
       }
     },
 
     CREATE_CAR: async (context, payload) => {
       try {
-        let { data, status } = await axios.post(API_URL, payload);
+        let userToken = localStorage.getItem('userToken');
+
+        let { data, status } = await axios.post(API_WITH_AUTH_URL, payload, {
+          headers: { Authorization: `Bearer ${userToken}` }
+        });
         if (status === 200) {
           context.commit('ADD_CAR', data);
         }
@@ -96,7 +111,9 @@ const store = new Vuex.Store({
           context.commit('TOGGLE_SNACKBAR', '');
         }, 2000);
 
-        return store.dispatch('CREATE_CAR', payload);
+        if (error.response.status === 503) {
+          return store.dispatch('CREATE_CAR', payload);
+        }
       }
     },
 
@@ -110,13 +127,17 @@ const store = new Vuex.Store({
 
     DELETE_CAR: async (context, payload) => {
       try {
-        let { status } = await axios.delete(`${API_URL}/${payload}`);
+        let userToken = localStorage.getItem('userToken');
+
+        let { status } = await axios.delete(`${API_WITH_AUTH_URL}/${payload}`, {
+          headers: { Authorization: `Bearer ${userToken}` }
+        });
 
         if (status === 204) {
           context.commit('SET_CARS_ARTER_DELETE_ONE', payload);
         }
       } catch (error) {
-        if (status === 503) {
+        if (error.response.status === 503) {
           context.commit('TOGGLE_SNACKBAR', 'Network error...');
 
           setTimeout(() => {
@@ -137,7 +158,16 @@ const store = new Vuex.Store({
 
     UPDATE_CAR: async (context, payload) => {
       try {
-        let { data, status } = await axios.put(`${API_URL}/${payload.id}`, payload);
+        let userToken = localStorage.getItem('userToken');
+
+        let { data, status } = await axios.put(
+          `${API_WITH_AUTH_URL}/${payload.id}`,
+          payload,
+          {
+            headers: { Authorization: `Bearer ${userToken}` }
+          }
+        );
+
         if (status === 200) {
           context.commit('SET_CARS_AFTER_UPDATE', data);
         }
@@ -148,7 +178,9 @@ const store = new Vuex.Store({
           context.commit('TOGGLE_SNACKBAR', '');
         }, 2000);
 
-        return store.dispatch('UPDATE_CAR', payload);
+        if (error.response.status === 503) {
+          return store.dispatch('UPDATE_CAR', payload);
+        }
       }
     },
 
@@ -158,19 +190,27 @@ const store = new Vuex.Store({
 
         if (status === 200) {
           context.commit('UPDATE_USER_TOKEN', data);
+
+          localStorage.setItem('userToken', data.token);
         }
       } catch (error) {
-        context.commit('TOGGLE_SNACKBAR', 'Network error...');
+        if (error.response.status === 503) {
+          return store.dispatch('LOGIN', payload);
+        }
 
-        setTimeout(() => {
-          context.commit('TOGGLE_SNACKBAR', '');
-        }, 2000);
+        if (status === 404) {
+          context.commit('TOGGLE_SNACKBAR', 'Invalid email or password...');
 
-        return store.dispatch('LOGIN', payload);
+          setTimeout(() => {
+            context.commit('TOGGLE_SNACKBAR', '');
+          }, 2000);
+        }
       }
     },
 
     LOGOUT: async (context, payload) => {
+      localStorage.removeItem('userToken');
+
       context.commit('UPDATE_USER_TOKEN', payload);
     }
   }

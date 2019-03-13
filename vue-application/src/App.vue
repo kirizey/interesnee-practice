@@ -1,13 +1,23 @@
 <template>
   <div>
+    <notification-snackbar v-if="SNACKBAR_OPTIONS.visible"/>
+
     <router-view/>
   </div>
 </template>
 
 <script>
+import NotificationSnackbar from "./components/NotificationSnackbar.vue";
+import { mapGetters } from "vuex";
+
 export default {
   name: "app",
-  components: {}
+  components: {
+    NotificationSnackbar
+  },
+  computed: {
+    ...mapGetters(["SNACKBAR_OPTIONS"])
+  }
 };
 </script>
 
