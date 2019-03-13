@@ -22,6 +22,11 @@ export default {
   },
   computed: {
     ...mapGetters(["CARS_MODAL_OPTIONS"])
+  },
+  mounted() {
+    if (!localStorage.getItem("userToken")) {
+      this.$router.push("/auth");
+    }
   }
 };
 </script>
