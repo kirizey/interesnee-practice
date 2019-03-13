@@ -17,17 +17,19 @@ const pushError = status => {
 /**
  * Common handler for XHR methods.
  *
+ * @param {string} userToken Token of authenticated user.
  * @param {string} method Request type. GET, POST, PUT, DELETE, etc.
  * @param {string} endpoint Url where request is sending.
  * @param {Object} data Sending data if it necessary.
  * @param {Object} options Search params for GET request.
  * @returns {Promise} Return promise.
  */
-const sendFetch = (method, endpoint, data, options) =>
+const sendFetch = (userToken, method, endpoint, data, options) =>
   new Promise((resolve, reject) => {
     const requestHeaders = new Headers();
     const stringifiedData = JSON.stringify(data);
 
+    requestHeaders.append('Authorization', `Bearer ${userToken}`);
     if (method === 'POST' || method === 'PUT') {
       requestHeaders.append('content-type', 'application/json');
     }
@@ -37,29 +39,24 @@ const sendFetch = (method, endpoint, data, options) =>
 
       searchParams.append('page', options.page);
       searchParams.append('keyword', options.searchQuery);
-
       if (options.orderBy) {
         searchParams.append('order_by', options.orderBy);
         searchParams.append('sort_order', options.sortOrder);
       }
       endpoint += `?${searchParams}`;
+
+      fetch(endpoint, { method, headers: requestHeaders }).then(result => {
+        if (result.ok) return resolve(result.json());
+
+        return reject(result.status);
+      });
+    } else {
+      fetch(endpoint, { method, headers: requestHeaders, body: stringifiedData }).then(result => {
+        if (result.ok) return resolve(result.json());
+
+        return reject(result.status);
+      });
     }
-
-    method === 'GET'
-      ? fetch(endpoint, { method }).then(result => {
-          if (result.ok) {
-            return resolve(result.json());
-          }
-
-          return reject(result.status);
-        })
-      : fetch(endpoint, { method, headers: requestHeaders, body: stringifiedData }).then(result => {
-          if (result.ok) {
-            return resolve(result.json());
-          }
-
-          return reject(result.status);
-        });
   });
 
 /**
@@ -70,25 +67,26 @@ export class CarService {
    * Costant api endpoint.
    */
   constructor() {
-    this.apiUrl = 'https://backend-jscamp.saritasa-hosting.com/api/cars';
+    this.apiUrl = 'https://backend-jscamp.saritasa-hosting.com/api/with-auth/cars';
   }
 
   /**
    * Common get cars data method call too api.
    *
+   * @param {string} userToken Token of current user.
    * @param {string} orderBy Name of field need to get.
    * @param {string} sortOrder Sort order.
    * @param {number} page Page number need to get.
    * @param {string} searchQuery Keyword need to search and get data.
    * @returns {Promise} Resolve - cars data, Reject - error and retry request.
    */
-  getCars(orderBy, sortOrder = 'asc', page = 1, searchQuery = '') {
+  getCars(userToken, orderBy, sortOrder = 'asc', page = 1, searchQuery = '') {
     const options = { orderBy, sortOrder, page, searchQuery };
 
-    return sendFetch('GET', this.apiUrl, '', options)
+    return sendFetch(userToken, 'GET', this.apiUrl, '', options)
       .then(response => response)
       .catch(error => {
-        if (error === 503) return this.getCars(orderBy, sortOrder, page, searchQuery);
+        if (error === 503) return this.getCars(userToken, orderBy, sortOrder, page, searchQuery);
 
         return pushError(400);
       });
@@ -97,15 +95,16 @@ export class CarService {
   /**
    * Common create car method call too api.
    *
+   * @param {string} userToken Token of current user.
    * @param {Object} data Request body, need to POST: { body_type_id,
    * make_id, carr_model_id, year, description, mileage}.
    * @returns {Promise} Resolve - status: "200" - OK, Reject - error and retry request.
    */
-  createCar(data) {
-    return sendFetch('POST', this.apiUrl, data)
+  createCar(userToken, data) {
+    return sendFetch(userToken, 'POST', this.apiUrl, data)
       .then(response => response)
       .catch(error => {
-        if (error === 503) return this.createCar(data);
+        if (error === 503) return this.createCar(userToken, data);
 
         return pushError(400);
       });
@@ -114,15 +113,16 @@ export class CarService {
   /**
    * Common update car data method call too api.
    *
+   * @param {string} userToken Token of current user.
    * @param {number} carId Id of car need to update.
    * @param {Object} data Object of fields and values need to update.
    * @returns {Promise} Resolve - status: "200" - OK, Reject - error and retry request.
    */
-  updateCar(carId, data) {
-    return sendFetch('PUT', `${this.apiUrl}/${carId}`, data)
+  updateCar(userToken, carId, data) {
+    return sendFetch(userToken, 'PUT', `${this.apiUrl}/${carId}`, data)
       .then(response => response)
       .catch(error => {
-        if (error === 503) return this.updateCar(carId, data);
+        if (error === 503) return this.updateCar(userToken, carId, data);
 
         return pushError(400);
       });
@@ -131,16 +131,84 @@ export class CarService {
   /**
    * Common delete car method call too api.
    *
+   * @param {string} userToken Token of current user.
    * @param {number} carId Id of car need to delete.
    * @returns {Promise} Resolve - status: "204" - deleted, Reject - error and retry request.
    */
-  deleteCar(carId) {
-    return sendFetch('DELETE', `${this.apiUrl}/${carId}`)
+  deleteCar(userToken, carId) {
+    return sendFetch(userToken, 'DELETE', `${this.apiUrl}/${carId}`)
       .then(response => response)
       .catch(error => {
-        if (error === 503) return this.deleteCar(carId);
+        if (error === 503) return this.deleteCar(userToken, carId);
 
         return pushError(400);
       });
+  }
+}
+
+/**
+ * Class provies auth methods
+ */
+export class AuthenticationService {
+  /**
+   * Constructor of class.
+   */
+  constructor() {
+    this.authUrl = 'https://backend-jscamp.saritasa-hosting.com/api/auth';
+  }
+
+  /**
+   * Get user token for CRUD methods.
+   *
+   * @param {Object} authData Input email and password data.
+   * @returns {Promise} Resolve - user token, reject - error.
+   */
+  login(authData) {
+    return sendFetch('', 'POST', this.authUrl, authData)
+      .then(response => {
+        const expirationTime = Date.now() + 3600 * 1000;
+
+        localStorage.setItem('userToken', response.token);
+        localStorage.setItem('expirationTime', expirationTime);
+      })
+      .catch(error => {
+        if (error === 503) return this.login(authData);
+
+        return pushError(400);
+      });
+  }
+
+  /**
+   * Logout method reset local storage.
+   *
+   */
+  logout() {
+    localStorage.removeItem('userToken');
+    localStorage.removeItem('expirationTime');
+  }
+
+  /**
+   * Check auth state.
+   *
+   * @returns {boolean} State of authentication.
+   */
+  checkAuthState() {
+    const token = localStorage.getItem('userToken');
+
+    if (token === undefined) {
+      this.logout();
+
+      return false;
+    }
+
+    const expirationTime = localStorage.getItem('expirationTime');
+
+    if (expirationTime < new Date()) {
+      this.logout();
+
+      return false;
+    }
+
+    return true;
   }
 }

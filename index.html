@@ -27,7 +27,10 @@
           </form>
           <button id="sign-in-toggle-btn" class="outline-primary" type="button">
             Sign in</button
-          ><button id="register-toggle-btn" class="primary" type="">Register</button>
+          ><button id="register-toggle-btn" class="primary" type="button">
+            Register
+          </button>
+          <button id="logout-btn" class="primary" type="button">Logout</button>
         </div>
       </div>
     </header>
@@ -209,19 +212,13 @@
             </div>
           </div>
           <div class="form-group">
-            <label for="username">Username:</label>
-            <div class="form-group__input-wrapper">
-              <input type="text" id="username" name="username" />
-            </div>
-          </div>
-          <div class="form-group">
             <label for="password">Password:</label>
             <div class="form-group__input-wrapper">
               <input type="password" id="password" name="password" />
             </div>
           </div>
           <div class="form-group form__btns">
-            <button class="authentication-form__button primary" type="button">
+            <button class="authentication-form__button primary" type="submit">
               Sign in
             </button>
           </div>

@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/extensions
-import { CarService } from './carServiceFetch.js';
+import { CarService, AuthenticationService } from './carServiceFetch.js';
 
 // table elements
 const tableBodyElement = document.querySelector('.cars-list__body');
@@ -52,6 +52,7 @@ const yearField = carForm.elements.year;
 
 // service provide api methods
 const carService = new CarService();
+const authenticationService = new AuthenticationService();
 
 let cars = [];
 let searchQuery = '';
@@ -62,6 +63,8 @@ let sortOrder = '';
 const createCarBtn = document.createElement('button');
 let deleteCarBtn = document.createElement('button');
 let updateCarBtn = document.createElement('button');
+
+const logoutBtn = document.querySelector('#logout-btn');
 
 /**
  * Method to push snackbar with sended message.
@@ -114,6 +117,24 @@ const checkForOpenModal = element => {
 const toggleAuthModal = () => {
   authModalWrapper.classList.toggle('hidden');
   checkForOpenModal(authModalWrapper);
+};
+
+/**
+ * Hide auth btns and show logout btn.
+ */
+const hideAuthBtns = () => {
+  toggleSignInModalBtn.classList.add('hidden');
+  togglRegisterModalBtn.classList.add('hidden');
+  logoutBtn.classList.remove('hidden');
+};
+
+/**
+ * Show auth btns and hide logout btn.
+ */
+const showAuthBtns = () => {
+  toggleSignInModalBtn.classList.remove('hidden');
+  togglRegisterModalBtn.classList.remove('hidden');
+  logoutBtn.classList.add('hidden');
 };
 
 /**
@@ -197,7 +218,7 @@ const updateCar = carId => {
     };
 
     carService
-      .updateCar(carId, data)
+      .updateCar(localStorage.userToken, carId, data)
       .then(() => {
         carModalWrapper.classList.add('hidden');
 
@@ -243,7 +264,7 @@ const updateCar = carId => {
  */
 const deleteCar = carId => {
   carService
-    .deleteCar(carId)
+    .deleteCar(localStorage.userToken, carId)
     .then(() => {
       const carElement = document.querySelector(`[data-id='${carId}']`);
 
@@ -411,12 +432,6 @@ const renderTable = carsData => {
   cars.map(car => appendCarInstanceInTable(car));
 };
 
-// initial showing data
-carService
-  .getCars()
-  .then(data => renderTable(data))
-  .catch(error => pushSnackbar(error));
-
 /**
  * Find method.
  *
@@ -425,7 +440,7 @@ carService
 const searchData = e => {
   e.preventDefault();
   carService
-    .getCars(sortBy, sortOrder, 1, e.target.elements.queryText.value)
+    .getCars(localStorage.userToken, sortBy, sortOrder, 1, e.target.elements.queryText.value)
     .then(data => renderTable(data))
     .catch(error => pushSnackbar(error));
 };
@@ -435,7 +450,13 @@ const searchData = e => {
  */
 const goToNextPage = () => {
   carService
-    .getCars(sortBy, sortOrder, parseInt(currentPageElement.innerText, 10) + 1, searchQuery)
+    .getCars(
+      localStorage.userToken,
+      sortBy,
+      sortOrder,
+      parseInt(currentPageElement.innerText, 10) + 1,
+      searchQuery,
+    )
     .then(data => renderTable(data))
     .catch(error => pushSnackbar(error));
 };
@@ -445,7 +466,13 @@ const goToNextPage = () => {
  */
 const goToPreviousPage = () => {
   carService
-    .getCars(sortBy, sortOrder, parseInt(currentPageElement.innerText, 10) - 1, searchQuery)
+    .getCars(
+      localStorage.userToken,
+      sortBy,
+      sortOrder,
+      parseInt(currentPageElement.innerText, 10) - 1,
+      searchQuery,
+    )
     .then(data => renderTable(data))
     .catch(error => pushSnackbar(error));
 };
@@ -462,7 +489,7 @@ const sortList = (field, e) => {
   searchQuery = '';
 
   carService
-    .getCars(sortBy, sortOrder, 1, '')
+    .getCars(localStorage.userToken, sortBy, sortOrder, 1, '')
     .then(data => renderTable(data))
     .catch(error => pushSnackbar(error));
 };
@@ -484,7 +511,7 @@ const createCar = () => {
     };
 
     carService
-      .createCar(car)
+      .createCar(localStorage.userToken, car)
       .then(() => {
         pushSnackbar('Created');
         carModalWrapper.classList.add('hidden');
@@ -552,6 +579,65 @@ const setSearchQueryValue = e => {
   searchQuery = e.target.value;
 };
 
+/**
+ * Get user token and render cars list.
+ *
+ * @param {Event} e Submition event.
+ */
+const login = e => {
+  e.preventDefault();
+
+  const formData = {
+    email: e.target.elements.email.value,
+    password: e.target.elements.password.value,
+  };
+
+  authenticationService
+    .login(formData)
+    .then(() => {
+      if (localStorage.userToken) {
+        // initial showing data
+        carService
+          .getCars(localStorage.userToken)
+          .then(carsData => renderTable(carsData))
+          .then(() => {
+            toggleAuthModal();
+            pushSnackbar('Welcome senpai!');
+            hideAuthBtns();
+          })
+          .catch(error => pushSnackbar(error));
+      }
+    })
+    .catch(() => pushSnackbar('Authorization failed'));
+};
+
+/**
+ * Make logout and remove table items.
+ */
+const logout = () => {
+  authenticationService.logout();
+  showAuthBtns();
+
+  while (tableBodyElement.firstChild) {
+    tableBodyElement.removeChild(tableBodyElement.firstChild);
+  }
+};
+
+(function() {
+  const authState = authenticationService.checkAuthState();
+
+  if (authState) {
+    hideAuthBtns();
+
+    carService
+      .getCars(localStorage.userToken)
+      .then(carsData => renderTable(carsData))
+      .catch(error => pushSnackbar(error));
+  } else {
+    showAuthBtns();
+  }
+})();
+
 // save the search text in variable
 searchInput.addEventListener('keydown', setSearchQueryValue);
 
@@ -595,3 +681,7 @@ authModalWrapper.addEventListener('click', e => {
   if (!isClickInsideAuthForm && !authForm.classList.contains('hidden'))
     authModalWrapper.classList.add('hidden');
 });
+
+authForm.addEventListener('submit', login);
+
+logoutBtn.addEventListener('click', logout);
