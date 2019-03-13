@@ -25,9 +25,9 @@ const mutations = {
   SET_PAGINATION_DATA: (state, payload) => (state.paginationData = payload),
   SET_QUERY_DATA: (state, payload) => (state.queryData = payload),
   SET_CARS_MODAL_OPTIONS: (state, payload) => (state.carsModalOptions = payload),
-  SET_CARS_ARTER_DELETE_ONE: (state, payload) =>
+  REMOVE_CAR: (state, payload) =>
     (state.cars = state.cars.filter(car => car.id !== payload)),
-  SET_CARS_AFTER_UPDATE: (state, payload) => {
+  SET_CAR_UPDATE: (state, payload) => {
     state.cars.map(car => {
       if (car.id === payload.id) {
         car.body_type = payload.body_type;
@@ -116,7 +116,7 @@ const actions = {
       });
 
       if (status === 204) {
-        context.commit('SET_CARS_ARTER_DELETE_ONE', payload);
+        context.commit('REMOVE_CAR', payload);
       }
     } catch (error) {
       if (error.response.status === 503) {
@@ -144,7 +144,7 @@ const actions = {
       );
 
       if (status === 200) {
-        context.commit('SET_CARS_AFTER_UPDATE', data);
+        context.commit('SET_CAR_UPDATE', data);
       }
     } catch (error) {
       context.commit('TOGGLE_SNACKBAR', 'Network error...');
