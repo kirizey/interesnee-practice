@@ -38,16 +38,28 @@ export default {
       password: ""
     };
   },
+
+  /**
+   * Validation options
+   */
   validations: {
     email: { required },
     password: { required }
   },
   computed: {
+    /** Get user token state value from store */
     ...mapGetters(["USER_TOKEN"])
   },
 
   methods: {
+    /**
+     * Get action method from store
+     */
     ...mapActions(["LOGIN"]),
+
+    /**
+     * Login user if form is valid and got a token
+     */
     login() {
       this.$v.$touch();
 

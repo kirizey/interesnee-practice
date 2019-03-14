@@ -26,8 +26,14 @@ export default {
   },
 
   methods: {
+    /**
+     * Get action method from store
+     */
     ...mapActions(["GET_CARS"]),
 
+    /**
+     * Render initial data in table
+     */
     renderInitialData() {
       this.GET_CARS({ page: 1 });
     }

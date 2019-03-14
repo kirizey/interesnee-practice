@@ -121,7 +121,12 @@ import { mapGetters, mapActions } from "vuex";
 import { required, between } from "vuelidate/lib/validators";
 
 export default {
-  computed: { ...mapGetters(["CARS_MODAL_OPTIONS"]) },
+  computed: {
+    /**
+     * Get the car's modal options to manage content inside it
+     */
+    ...mapGetters(["CARS_MODAL_OPTIONS"])
+  },
 
   data() {
     return {
@@ -135,6 +140,9 @@ export default {
     };
   },
 
+  /**
+   * Validation settings for form
+   */
   validations: {
     body_type_id: { required },
     make_id: { required },
@@ -145,6 +153,9 @@ export default {
   },
 
   methods: {
+    /**
+     * Get methods form store to use in this component
+     */
     ...mapActions([
       "CHANGE_CARS_MODAL_OPTIONS",
       "CREATE_CAR",
@@ -153,6 +164,9 @@ export default {
       "PUSH_SNACKBAR"
     ]),
 
+    /**
+     * Method closing modal window
+     */
     closeModal() {
       this.CHANGE_CARS_MODAL_OPTIONS({
         opened: false,
@@ -160,6 +174,9 @@ export default {
       });
     },
 
+    /**
+     * Method using store action to create car based input data after validation
+     */
     createCar() {
       this.$v.$touch();
       if (!this.$v.$invalid) {
@@ -177,6 +194,9 @@ export default {
       }
     },
 
+    /**
+     * Method using store action to delete car
+     */
     deleteCar() {
       const carId = this.CARS_MODAL_OPTIONS.data.id;
       this.DELETE_CAR(carId).then(() => {
@@ -185,6 +205,9 @@ export default {
       });
     },
 
+    /**
+     * Method using store action to update car based input data after validation
+     */
     updateCar() {
       let carId = this.CARS_MODAL_OPTIONS.data.id;
 
@@ -207,6 +230,9 @@ export default {
     }
   },
 
+  /**
+   * Initially fill form if it opened by click on car element
+   */
   mounted() {
     if (this.CARS_MODAL_OPTIONS.data) {
       const carData = this.CARS_MODAL_OPTIONS.data;

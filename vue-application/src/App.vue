@@ -16,6 +16,9 @@ export default {
     NotificationSnackbar
   },
   computed: {
+    /**
+     * Get snackbar options state for toggle it to show notofocations
+     */
     ...mapGetters(["SNACKBAR_OPTIONS"])
   }
 };

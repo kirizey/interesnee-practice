@@ -28,12 +28,21 @@ import { mapGetters, mapActions } from "vuex";
 
 export default {
   computed: {
+    /**
+     * Get state data form store
+     */
     ...mapGetters(["PAGINATION_DATA", "QUERY_DATA"])
   },
 
   methods: {
+    /**
+     * Get action method from store
+     */
     ...mapActions(["GET_CARS"]),
 
+    /**
+     * Method getting cars list from next page of API
+     */
     goToNextPage() {
       this.GET_CARS({
         page: this.QUERY_DATA.page + 1,
@@ -43,6 +52,9 @@ export default {
       });
     },
 
+    /**
+     * Method getting cars list from previous page of API
+     */
     goToPreviousPage() {
       this.GET_CARS({
         page: this.QUERY_DATA.page - 1,

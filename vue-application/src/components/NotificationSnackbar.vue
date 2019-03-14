@@ -8,6 +8,9 @@ import { mapGetters } from "vuex";
 export default {
   name: "NotificationSnackbar",
   computed: {
+    /**
+     * Get snackbar options state to show message inside the component
+     */
     ...mapGetters(["SNACKBAR_OPTIONS"])
   }
 };

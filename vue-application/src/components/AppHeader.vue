@@ -28,11 +28,20 @@ export default {
     };
   },
   computed: {
+    /**
+     * Get state of options for GET request
+     */
     ...mapGetters(["QUERY_DATA"])
   },
   methods: {
+    /**
+     * Get acions from store
+     */
     ...mapActions(["GET_CARS", "CHANGE_CARS_MODAL_OPTIONS", "LOGOUT"]),
 
+    /**
+     * Get cars list based on input search query
+     */
     search() {
       this.GET_CARS({
         page: 1,
@@ -42,14 +51,20 @@ export default {
       });
     },
 
+    /**
+     * Method for open modal window
+     */
     openCreateCarModal() {
       this.CHANGE_CARS_MODAL_OPTIONS({ opened: true });
     },
 
+    /**
+     * Method for logout and redirect to auth page
+     */
     logout() {
       this.$router.push(this.$route.query.redirect || "/auth");
 
-      this.LOGOUT(null);
+      this.LOGOUT();
     }
   }
 };

@@ -45,8 +45,14 @@ export default {
     };
   },
   methods: {
+    /**
+     * Get action method from store
+     */
     ...mapActions(["GET_CARS"]),
 
+    /**
+     * Sort all of data in oreder and field of selected filter
+     */
     selectSort(sName, sortOrder) {
       this.selectedFilter = {
         sName: sName,
@@ -62,6 +68,9 @@ export default {
     }
   },
   computed: {
+    /**
+     * Get request options for "GET" requests
+     */
     ...mapGetters(["QUERY_DATA"])
   }
 };

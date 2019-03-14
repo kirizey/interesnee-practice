@@ -21,8 +21,14 @@ export default {
     CarModal
   },
   computed: {
+    /**
+     * Get state values form store
+     */
     ...mapGetters(["CARS_MODAL_OPTIONS"])
   },
+  /**
+   * Check for user token before using this component and redirect if token is not exists
+   */
   mounted() {
     if (!localStorage.getItem("userToken")) {
       this.$router.push("/auth");

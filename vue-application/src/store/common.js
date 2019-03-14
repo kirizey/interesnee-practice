@@ -7,7 +7,12 @@ const getters = {
 };
 
 const mutations = {
-  TOGGLE_SNACKBAR: (state, payload) => {
+  /**
+   * Push snackbar with sent message and close it
+   * @param {object} state store state
+   * @param {object} payload new snackbar's options
+   */
+  SET_SNACKBAR_OPTIONS: (state, payload) => {
     state.shanckbar = { visible: !state.shanckbar.visible, message: payload };
 
     setTimeout(() => {
@@ -17,7 +22,12 @@ const mutations = {
 };
 
 const actions = {
-  PUSH_SNACKBAR: (context, payload) => context.commit('TOGGLE_SNACKBAR', payload)
+  /**
+   * Action for push snackbar with sent message
+   * @param {object} context store state
+   * @param {object} payload notification message
+   */
+  PUSH_SNACKBAR: (context, payload) => context.commit('SET_SNACKBAR_OPTIONS', payload)
 };
 
 export default {

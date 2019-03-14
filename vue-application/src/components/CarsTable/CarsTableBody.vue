@@ -18,11 +18,20 @@ import { mapGetters, mapActions } from "vuex";
 
 export default {
   computed: {
+    /**
+     * Get state values form store
+     */
     ...mapGetters(["CARS", "CARS_MODAL_OPTIONS"])
   },
   methods: {
+    /**
+     * Get action method from store
+     */
     ...mapActions(["CHANGE_CARS_MODAL_OPTIONS"]),
 
+    /**
+     * Open modal for selected car and fill it by sent data
+     */
     openUpdateCarModal(car) {
       this.CHANGE_CARS_MODAL_OPTIONS({ opened: true, data: car });
     }
